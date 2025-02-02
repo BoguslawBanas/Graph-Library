@@ -486,29 +486,30 @@ private:
         }
     }
 
-    void cutOutNode(FibonacciHeapNode *node){
+    void cutNode(FibonacciHeapNode *node){
         if(node->parent==nullptr) return;
         FibonacciHeapNode *p=node->parent;
         node->parent=nullptr;
         if(node->left_s==node) p->child=nullptr;
-        else p->child=node->left_s;
-        FibonacciHeapNode *l=node->left_s;
-        FibonacciHeapNode *r=node->right_s;
-        l->right_s=r;
-        r->left_s=l;
-            
-        r=this->min->right_s;
-        node->left_s=this->min;
-        node->right_s=r;
-        this->min->right_s=node;
-        r->left_s=node;
-        node->mark=false;
-
-        if(p->mark){
-            cutOutNode(p);
+        else{
+            p->child=node->left_s;
+            FibonacciHeapNode *l=node->left_s;
+            FibonacciHeapNode *r=node->right_s;
+            l->right_s=r;
+            r->left_s=l;
         }
-        else if(p->parent!=nullptr){
-            p->mark=true;
+        --p->degree;
+        this->addToList(node, min);
+        node->mark=false;
+    }
+
+    void cascadingCutNode(FibonacciHeapNode *node){
+        if(node->parent==nullptr) return;
+        FibonacciHeapNode *p=node->parent;
+        if(node->mark==false) node->mark=true;
+        else{
+            this->cutNode(node);
+            this->cascadingCutNode(p);
         }
     }
 
@@ -637,7 +638,9 @@ public:
         }
         ptr->key_value=value;
         if(ptr->parent!=nullptr && value<ptr->parent->key_value){
-            cutOutNode(ptr);
+            FibonacciHeapNode *p=ptr->parent;
+            cutNode(ptr);
+            cascadingCutNode(p);
         }
         if(this->min->key_value>value) this->min=ptr;
     }
