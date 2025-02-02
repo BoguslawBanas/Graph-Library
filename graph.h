@@ -575,7 +575,9 @@ public:
         }
         if(!flag){
             adjacencyList[first].push_back(second);
-            adjacencyList[second].push_back(first);
+            if(first!=second){
+                adjacencyList[second].push_back(first);
+            }
         }
     }
 

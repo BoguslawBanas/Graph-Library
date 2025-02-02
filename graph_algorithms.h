@@ -7,8 +7,8 @@
 #include <unordered_map>
 #include <algorithm>
 
-template<typename Graph>
-bool isWeaklyConnected(Graph &g){
+template<typename G>
+bool isWeaklyConnected(G &g){
     if(g.getSize()==0) return false;
     if(!g.isDirected()){
         return isStronglyConnected(g);
@@ -45,8 +45,8 @@ bool isWeaklyConnected(Graph &g){
     return false;
 }
 
-template<typename Graph>
-bool isStronglyConnected(Graph &g){
+template<typename G>
+bool isStronglyConnected(G &g){
     if(g.getSize()==0) return false;
     uint32_t counter=1;
     std::queue<uint32_t>q;
@@ -66,7 +66,7 @@ bool isStronglyConnected(Graph &g){
     if(counter!=g.getSize()) return false;
     if(!g.isDirected()) return true;
 
-    //for directed graphs
+    //for directed Gs
     g.transpose();
     counter=1;
     for(uint32_t i=0;i<g.getSize();++i) v[i]=false;
@@ -85,8 +85,8 @@ bool isStronglyConnected(Graph &g){
     return false;
 }
 
-template<typename Graph>
-bool isBipartite(Graph &g){
+template<typename G>
+bool isBipartite(G &g){
     if(g.getSize()==0) return false;
     for(uint32_t i=0;i<g.getSize();++i) {
         if(g.areVertexesConnected(i,i)) return false;
@@ -113,8 +113,8 @@ bool isBipartite(Graph &g){
     return true;
 }
 
-template<typename Graph>
-int32_t bfs(Graph &g, const uint32_t src, const uint32_t destination){
+template<typename G>
+int32_t bfs(G &g, const uint32_t src, const uint32_t destination){
     if(src==destination) return 0;
     std::queue<uint32_t>q;
     std::vector<int32_t>tmp(g.getSize(), -1);
@@ -133,8 +133,8 @@ int32_t bfs(Graph &g, const uint32_t src, const uint32_t destination){
     return -1;
 }
 
-template<typename Graph>
-std::unordered_map<uint32_t, int32_t>* bfs(Graph& g, const uint32_t src, const std::vector<uint32_t>& destinations){
+template<typename G>
+std::unordered_map<uint32_t, int32_t>* bfs(G& g, const uint32_t src, const std::vector<uint32_t>& destinations){
     if(destinations.empty()){
         return new std::unordered_map<uint32_t, int32_t>();
     }
@@ -169,8 +169,8 @@ std::unordered_map<uint32_t, int32_t>* bfs(Graph& g, const uint32_t src, const s
     return result;
 }
 
-template<typename Graph>
-std::vector<int32_t>* bfs(Graph &g, const uint32_t src){
+template<typename G>
+std::vector<int32_t>* bfs(G &g, const uint32_t src){
     auto result=new std::vector<int32_t>(g.getSize(), -1);
     std::queue<uint32_t>q;
     q.push(src);
@@ -187,8 +187,8 @@ std::vector<int32_t>* bfs(Graph &g, const uint32_t src){
     return result;
 }
 
-template<typename Graph>
-int32_t bfs(Graph &g, const uint32_t src, const uint32_t destination, bool (*fun)(const uint32_t, const uint32_t)){
+template<typename G, typename F>
+int32_t bfs(G &g, const uint32_t src, const uint32_t destination, const F &fun){
     if(src==destination) return 0;
     std::queue<int32_t>q;
     std::vector<int32_t>tmp(g.getSize(), -1);
@@ -207,8 +207,8 @@ int32_t bfs(Graph &g, const uint32_t src, const uint32_t destination, bool (*fun
     return -1;
 }
 
-template<typename Graph>
-std::unordered_map<uint32_t, int32_t>* bfs(Graph& g, const uint32_t src, const std::vector<uint32_t>& destinations, bool (*fun)(const uint32_t, const uint32_t)){
+template<typename G, typename F>
+std::unordered_map<uint32_t, int32_t>* bfs(G& g, const uint32_t src, const std::vector<uint32_t>& destinations, const F &fun){
     if(destinations.empty()){
         return new std::unordered_map<uint32_t, int32_t>();
     }
@@ -243,8 +243,8 @@ std::unordered_map<uint32_t, int32_t>* bfs(Graph& g, const uint32_t src, const s
     return result;
 }
 
-template<typename Graph>
-std::vector<int32_t>* bfs(Graph &g, const uint32_t src, bool (*fun)(const uint32_t, const uint32_t)){
+template<typename G, typename F>
+std::vector<int32_t>* bfs(G &g, const uint32_t src, const F &fun){
     auto result=new std::vector<int32_t>(g.getSize(), -1);
     std::queue<uint32_t>q;
     q.push(src);
@@ -262,8 +262,8 @@ std::vector<int32_t>* bfs(Graph &g, const uint32_t src, bool (*fun)(const uint32
     return result;
 }
 
-template<typename Graph>
-std::vector<int32_t>* bfs_path(Graph &g, const uint32_t src, const uint32_t destination){
+template<typename G>
+std::vector<int32_t>* bfs_path(G &g, const uint32_t src, const uint32_t destination){
     std::vector<int32_t>*result=new std::vector<int32_t>();
     bool flag=false;
     if(src==destination){
@@ -300,8 +300,8 @@ std::vector<int32_t>* bfs_path(Graph &g, const uint32_t src, const uint32_t dest
     return result;
 }
 
-template<typename Graph>
-std::vector<uint32_t>* bfs_path(Graph &g, const uint32_t src, const uint32_t destination, bool (*fun)(const uint32_t, const uint32_t)) {
+template<typename G, typename F>
+std::vector<uint32_t>* bfs_path(G &g, const uint32_t src, const uint32_t destination, const F &fun) {
     std::vector<int32_t>tmp(g.getSize(), -2);
     std::vector<uint32_t>tmp_2(g.getSize(),0);
     std::queue<uint32_t>q;
@@ -330,8 +330,8 @@ std::vector<uint32_t>* bfs_path(Graph &g, const uint32_t src, const uint32_t des
     return result;
 }
 
-template<typename Graph>
-void dfs_preorder(Graph &g, const uint32_t src, void (*fun)(const uint32_t), std::vector<bool>&is_visited){
+template<typename G>
+void dfs_preorder(G &g, const uint32_t src, void (*fun)(const uint32_t), std::vector<bool>&is_visited){
     if(is_visited[src]) return;
     is_visited[src]=true;
     fun(src);
@@ -340,8 +340,8 @@ void dfs_preorder(Graph &g, const uint32_t src, void (*fun)(const uint32_t), std
     }
 }
 
-template<typename Graph>
-void dfs_postorder(Graph &g, const uint32_t src, void (*fun)(const uint32_t), std::vector<bool>&is_visited){
+template<typename G>
+void dfs_postorder(G &g, const uint32_t src, void (*fun)(const uint32_t), std::vector<bool>&is_visited){
     if(is_visited[src]) return;
     is_visited[src]=true;
     for(uint32_t i : g.getNeighbours(src)){
@@ -350,8 +350,8 @@ void dfs_postorder(Graph &g, const uint32_t src, void (*fun)(const uint32_t), st
     fun(src);
 }
 
-template<typename Graph, typename N, typename PQ>
-std::vector<std::pair<uint32_t, uint32_t>>* prim(Graph &g, const uint32_t src) {
+template<typename G, typename N, typename PQ>
+std::vector<std::pair<uint32_t, uint32_t>>* prim(G &g, const uint32_t src) {
     auto result=new std::vector<std::pair<uint32_t,uint32_t>>();
     std::vector<int32_t>parent(g.getSize(), -1);
     std::vector<N>keys(g.getSize(), g.getMax());
@@ -385,14 +385,14 @@ std::vector<std::pair<uint32_t, uint32_t>>* prim(Graph &g, const uint32_t src) {
     return result;
 }
 
-template<typename Graph, typename N, typename Disjoint_Set>
-std::vector<std::pair<uint32_t, uint32_t>>* kruskal(Graph &g){
-    if(!isWeaklyConnected<Graph>(g)) return NULL;
+template<typename G, typename N, typename DS>
+std::vector<std::pair<uint32_t, uint32_t>>* kruskal(G &g){
+    if(!isWeaklyConnected<G>(g)) return NULL;
     auto list=g.getListOfEdges();
     std::sort(list.begin(), list.end(), [](const auto &p1, const auto &p2){
         return p1.second<p2.second;
     });
-    Disjoint_Set ds(g.getSize());
+    DS ds(g.getSize());
     auto result=new std::vector<std::pair<uint32_t,uint32_t>>();
     for(auto &i : list){
         if(ds.find(i.first.first)!=ds.find(i.first.second)){
@@ -403,8 +403,8 @@ std::vector<std::pair<uint32_t, uint32_t>>* kruskal(Graph &g){
     return result;
 }
 
-template<typename Graph, typename N, typename PQ>
-N dijkstra(Graph &g, const uint32_t src, const uint32_t destination) {
+template<typename G, typename N, typename PQ>
+N dijkstra(G &g, const uint32_t src, const uint32_t destination) {
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
@@ -424,8 +424,8 @@ N dijkstra(Graph &g, const uint32_t src, const uint32_t destination) {
     return distance[destination];
 }
 
-template<typename Graph, typename N, typename PQ>
-N dijkstra(Graph &g, const uint32_t src, const uint32_t destination, bool (*fun)(const uint32_t, const N)) {
+template<typename G, typename N, typename PQ, typename F>
+N dijkstra(G &g, const uint32_t src, const uint32_t destination, const F &fun) {
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
@@ -445,8 +445,8 @@ N dijkstra(Graph &g, const uint32_t src, const uint32_t destination, bool (*fun)
     return distance[destination];
 }
 
-template<typename Graph, typename N, typename PQ>
-std::vector<uint32_t>* dijkstra_path(Graph &g, const uint32_t src, const uint32_t destination) {
+template<typename G, typename N, typename PQ>
+std::vector<uint32_t>* dijkstra_path(G &g, const uint32_t src, const uint32_t destination) {
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
@@ -475,8 +475,8 @@ std::vector<uint32_t>* dijkstra_path(Graph &g, const uint32_t src, const uint32_
     return result;
 }
 
-template<typename Graph, typename N, typename PQ>
-std::vector<uint32_t>* dijkstra_path(Graph &g, const uint32_t src, const uint32_t destination, bool (*fun)(const uint32_t, const N)) {
+template<typename G, typename N, typename PQ, typename F>
+std::vector<uint32_t>* dijkstra_path(G &g, const uint32_t src, const uint32_t destination, const F &fun) {
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
@@ -512,8 +512,8 @@ std::vector<uint32_t>* dijkstra_path(Graph &g, const uint32_t src, const uint32_
 }
 
 
-template<typename Graph, typename N, typename PQ>
-std::unordered_map<uint32_t, N>* dijkstra(Graph &g, const uint32_t src, const std::vector<uint32_t> &destinations) {
+template<typename G, typename N, typename PQ>
+std::unordered_map<uint32_t, N>* dijkstra(G &g, const uint32_t src, const std::vector<uint32_t> &destinations) {
     N max=g.getMax();
     std::vector<N>distance(g.getSize(), max);
     std::vector<bool>is_visited(g.getSize(), false);
@@ -544,8 +544,8 @@ std::unordered_map<uint32_t, N>* dijkstra(Graph &g, const uint32_t src, const st
     return result;
 }
 
-template<typename Graph, typename N, typename PQ>
-std::unordered_map<uint32_t, N>* dijkstra(Graph &g, const uint32_t src, const std::vector<uint32_t> &destinations, bool (*fun)(const uint32_t, const N)) {
+template<typename G, typename N, typename PQ, typename F>
+std::unordered_map<uint32_t, N>* dijkstra(G &g, const uint32_t src, const std::vector<uint32_t> &destinations, const F &fun) {
     N max=g.getMax();
     std::vector<N>distance(g.getSize(), max);
     std::vector<bool>is_visited(g.getSize(), false);
@@ -576,8 +576,8 @@ std::unordered_map<uint32_t, N>* dijkstra(Graph &g, const uint32_t src, const st
     return result;
 }
 
-template<typename Graph, typename N, typename PQ>
-std::vector<N>* dijkstra(Graph &g, const uint32_t src) {
+template<typename G, typename N, typename PQ>
+std::vector<N>* dijkstra(G &g, const uint32_t src) {
     N max=g.getMax();
     auto *result=new std::vector<N>(g.getSize(), max);
     std::vector<bool>is_visited(g.getSize(), false);
@@ -597,8 +597,8 @@ std::vector<N>* dijkstra(Graph &g, const uint32_t src) {
     return result;
 }
 
-template<typename Graph, typename N, typename PQ>
-std::vector<N>* dijkstra(Graph &g, const uint32_t src, bool (*fun)(const uint32_t, const N)) {
+template<typename G, typename N, typename PQ, typename F>
+std::vector<N>* dijkstra(G &g, const uint32_t src, const F &fun) {
     N max=g.getMax();
     auto *result=new std::vector<N>(g.getSize(), max);
     std::vector<bool>is_visited(g.getSize(), false);
@@ -618,8 +618,8 @@ std::vector<N>* dijkstra(Graph &g, const uint32_t src, bool (*fun)(const uint32_
     return result;
 }
 
-template<typename Graph, typename N>
-std::vector<N>* bellmanFord(Graph &g, const uint32_t src) {
+template<typename G, typename N>
+std::vector<N>* bellmanFord(G &g, const uint32_t src) {
     N max=g.getMax();
     auto result=new std::vector<N>(g.getSize(), max);
     result->at(src)=0;
@@ -651,8 +651,8 @@ std::vector<N>* bellmanFord(Graph &g, const uint32_t src) {
     return result;
 }
 
-template<typename Graph, typename N>
-std::vector<std::vector<N>>* floydWarshall(Graph &g){
+template<typename G, typename N>
+std::vector<std::vector<N>>* floydWarshall(G &g){
     N max=g.getMax();
     std::vector<std::vector<N>>* result=new std::vector<std::vector<N>>(g.getSize(), std::vector<N>(g.getSize(), max));
 
@@ -679,8 +679,8 @@ std::vector<std::vector<N>>* floydWarshall(Graph &g){
     return result;
 }
 
-template<typename Graph, typename N, typename PQ>
-N A_star(Graph &g, const uint32_t src, const uint32_t destination, N (*heuristic)(const uint32_t)) {
+template<typename G, typename N, typename PQ>
+N A_star(G &g, const uint32_t src, const uint32_t destination, N (*heuristic)(const uint32_t)) {
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
@@ -701,8 +701,8 @@ N A_star(Graph &g, const uint32_t src, const uint32_t destination, N (*heuristic
     return distance[destination];
 }
 
-template<typename Graph, typename N, typename PQ>
-std::vector<uint32_t>* A_star_path(Graph &g, const uint32_t src, const uint32_t destination, N (*heuristic)(const uint32_t)) {
+template<typename G, typename N, typename PQ>
+std::vector<uint32_t>* A_star_path(G &g, const uint32_t src, const uint32_t destination, N (*heuristic)(const uint32_t)) {
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<int32_t>prev_vertex(g.getSize(), -1);

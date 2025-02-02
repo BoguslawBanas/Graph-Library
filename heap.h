@@ -2,6 +2,7 @@
 #define HEAP_H
 
 #define CONSOLIDATE_SIZE 34
+#define BINOMIAL_HEAP_LIST_SIZE 32
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
@@ -69,7 +70,7 @@ public:
         if(this->doesContain(node)){
             printErrorMsg(2, "Trying to insert an element with the same key that exists already in the binary heap.");
         }
-        int index=heap.size();
+        uint32_t index=heap.size();
         heap.push_back(std::pair<uint32_t, N>(node, value));
         m[node]=index;
         while(index!=0 && heap[(index-1)/2].second>heap[index].second) {
@@ -174,9 +175,20 @@ private:
     };
 
     BinomialHeapNode *head;
-    BinomialHeapNode *min;
     uint32_t size;
     std::unordered_map<uint32_t, BinomialHeapNode*>m;
+
+    BinomialHeapNode* find_min(){
+        if(!this->head) return nullptr;
+        BinomialHeapNode *result=this->head;
+        BinomialHeapNode *ptr=this->head->sibling;
+
+        while(ptr){
+            if(ptr->key_value<result->key_value) result=ptr;
+            ptr=ptr->sibling;
+        }
+        return result;
+    }
 
     void priv_union(){
         BinomialHeapNode *ptr=this->head;
@@ -228,7 +240,7 @@ private:
 public:
     BinomialHeap() {
         this->size=0;
-        head=min=nullptr;
+        head=nullptr;
     }
 
     ~BinomialHeap(){
@@ -250,13 +262,12 @@ public:
         BinomialHeapNode *ptr=new BinomialHeapNode(node,value);
         m[node]=ptr;
         if(this->isEmpty()){
-            this->head=this->min=ptr;
+            this->head=ptr;
         }
         else{
             ptr->sibling=this->head;
             this->head=ptr;
             priv_union();
-            if(value<this->min->key_value) this->min=ptr;
         }
         ++this->size;
     }
@@ -265,14 +276,16 @@ public:
         if(this->isEmpty()){
             printErrorMsg(2, "Trying to get the smallest element from an empty binomial heap.");
         }
-        return std::pair<uint32_t, N>(this->min->key, this->min->key_value);
+        BinomialHeapNode *min=find_min();
+        return std::pair<uint32_t, N>(min->key, min->key_value);
     }
 
     void extractMin() override{
         if(this->isEmpty()){
             printErrorMsg(2, "Trying to extract the smallest element from an empty binomial heap.");
         }
-        m.erase(this->min->key);
+        BinomialHeapNode *min=find_min();
+        m.erase(min->key);
         if(this->getSize()==1){
             m.clear();
             delete head;
@@ -280,9 +293,8 @@ public:
             --this->size;
             return;
         }
-        BinomialHeapNode *min=head;
         BinomialHeapNode *ptr=this->head;
-        BinomialHeapNode *children_ptr=this->min->child;
+        BinomialHeapNode *children_ptr=min->child;
 
         std::vector<BinomialHeapNode*>tmp_children;
         std::vector<BinomialHeapNode*>tmp_heads;
@@ -294,13 +306,13 @@ public:
         }
 
         while(ptr!=nullptr){
-            if(ptr!=this->min){
+            if(ptr!=min){
                 tmp_heads.push_back(ptr);
             }
             ptr=ptr->sibling;
         }
 
-        delete this->min;
+        delete min;
 
         int32_t i=tmp_children.size()-1;
         int32_t j=0;
@@ -324,15 +336,20 @@ public:
             ++j;
         }
 
-        this->head=this->min=new_list[0];
+        this->head=min=new_list[0];
         new_list.back()->sibling=nullptr;
         for(uint32_t k=1;k<new_list.size();++k){
             new_list[k-1]->sibling=new_list[k];
-            if(this->min->key_value>new_list[k]->key_value){
-                this->min=new_list[k];
+            if(min->key_value>new_list[k]->key_value){
+                min=new_list[k];
             }
         }
         priv_union();
+        ptr=this->head;
+        while(ptr){
+            ptr->parent=nullptr;
+            ptr=ptr->sibling;
+        }
         --this->size;
     }
 
@@ -358,9 +375,6 @@ public:
             std::swap(ptr->key_value, ptr->parent->key_value);
             ptr=ptr->parent;
         }
-        if(this->min->key_value>new_value){
-            this->min=m[node];
-        }
     }
 
     void unionize(BinomialHeap *to_union) {
@@ -372,6 +386,8 @@ public:
         BinomialHeapNode *tmp2=to_union->head;
         BinomialHeapNode *tmp3=nullptr;
         BinomialHeapNode *new_head=nullptr;
+        BinomialHeapNode *min=find_min();
+
         for(auto &it : to_union->m){
             if(this->doesContain(it.first)){
                 printErrorMsg(2, "In function unionize (class BinomialHeap) there is already a value with that key.");
@@ -410,7 +426,7 @@ public:
             tmp3=tmp3->sibling;
         }
         if(to_union->getMin().second<this->getMin().second){
-            this->min=to_union->m[to_union->getMin().first];
+            min=to_union->m[to_union->getMin().first];
         }
         this->size+=to_union->getSize();
         this->head=new_head;
@@ -420,12 +436,13 @@ public:
     }
 };
 
+
 template<typename N>
 class FibonacciHeap : public Heap<N> {
 private:
     struct FibonacciHeapNode{
         uint32_t key;
-        N key_value;
+        N value;
         FibonacciHeapNode *child;
         FibonacciHeapNode *left_s;
         FibonacciHeapNode *right_s;
@@ -435,7 +452,7 @@ private:
 
         FibonacciHeapNode(const uint32_t key, const N value){
             this->key=key;
-            this->key_value=value;
+            this->value=value;
             this->child=this->left_s=this->right_s=this->parent=nullptr;
             this->degree=0;
             this->mark=false;
@@ -469,7 +486,7 @@ private:
         else{
             FibonacciHeapNode *ptr2=m[consolidate_arr[d]];
             consolidate_arr[d]=-1;
-            if(ptr->key_value<ptr2->key_value){
+            if(ptr->value<ptr2->value){
                 ptr2->parent=ptr;
                 addToList(ptr2, ptr->child);
                 ptr->child=ptr2;
@@ -552,7 +569,7 @@ public:
         FibonacciHeapNode *ptr=new FibonacciHeapNode(node,value);
         m[node]=ptr;
         addToList(ptr,this->min);
-        if(this->min==nullptr || this->min->key_value>value) this->min=ptr;
+        if(this->min==nullptr || this->min->value>value) this->min=ptr;
         ++this->size;
     }
 
@@ -560,7 +577,7 @@ public:
         if(this->isEmpty()){
             printErrorMsg(2, "Trying to get the smallest element from an empty fibonacci heap.");
         }
-        return std::pair<uint32_t,N> (this->min->key, this->min->key_value);
+        return std::pair<uint32_t,N> (this->min->key, this->min->value);
     }
 
     void extractMin() override{
@@ -614,7 +631,7 @@ public:
                 }
                 else{
                     addToList(ptr, this->min);
-                    if(ptr->key_value<this->min->key_value) this->min=ptr;
+                    if(ptr->value<this->min->value) this->min=ptr;
                 }
             }
         }
@@ -633,16 +650,16 @@ public:
             return;
         }
         FibonacciHeapNode *ptr=m[node];
-        if(value>ptr->key_value){
+        if(value>ptr->value){
             printErrorMsg(2, "New value is bigger than original one, so operation 'decreaseKey' cannot take place.");
         }
-        ptr->key_value=value;
-        if(ptr->parent!=nullptr && value<ptr->parent->key_value){
+        ptr->value=value;
+        if(ptr->parent!=nullptr && value<ptr->parent->value){
             FibonacciHeapNode *p=ptr->parent;
             cutNode(ptr);
             cascadingCutNode(p);
         }
-        if(this->min->key_value>value) this->min=ptr;
+        if(this->min->value>value) this->min=ptr;
     }
 
     void unionize(FibonacciHeap *to_union) {
@@ -664,7 +681,7 @@ public:
         this->min->right_s=to_union->min;
         tmp1->right_s=rs;
         rs->left_s=tmp1;
-        if(minPtr->key_value<this->min->key_value){
+        if(minPtr->value<this->min->value){
             this->min=to_union->min;
         }
         this->size+=to_union->getSize();
