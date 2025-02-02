@@ -141,6 +141,25 @@ public:
     }
 
     void addEdge(const uint32_t first, const uint32_t second) override{
+        // if(this->isIndexOutOfBounds(first)){
+        //     printErrorMsg(2, "The first argument of a method addEdge(const uint32_t, const uint32_t) in a class ListGraphDirected is out of bounds.");
+        // }
+        // if(this->isIndexOutOfBounds(second)){
+        //     printErrorMsg(2, "The second argument of a method addEdge(const uint32_t, const uint32_t) in a class ListGraphDirected is out of bounds.");
+        // }
+
+        // bool flag=false;
+        // for(auto i : adjacencyList[first]){
+        //     if(second==i){
+        //         flag=true;
+        //         break;
+        //     }
+        // }
+        // if(!flag) adjacencyList[first].push_back(second);
+        this->addEdge(first, second, false);
+    }
+
+    void addEdge(const uint32_t first, const uint32_t second, const bool saveFlag){
         if(this->isIndexOutOfBounds(first)){
             printErrorMsg(2, "The first argument of a method addEdge(const uint32_t, const uint32_t) in a class ListGraphDirected is out of bounds.");
         }
@@ -149,12 +168,15 @@ public:
         }
 
         bool flag=false;
-        for(auto i : adjacencyList[first]){
-            if(second==i){
-                flag=true;
-                break;
+        if(saveFlag){
+            for(auto i : adjacencyList[first]){
+                if(second==i){
+                    flag=true;
+                    break;
+                }
             }
         }
+        
         if(!flag) adjacencyList[first].push_back(second);
     }
 
@@ -443,7 +465,9 @@ public:
         }
         else{
             adjacencyList[v1].push_back(std::pair<uint32_t, N>(v2, weight));
-            adjacencyList[v2].push_back(std::pair<uint32_t, N>(v1, weight));
+            if(v1!=v2){
+                adjacencyList[v2].push_back(std::pair<uint32_t, N>(v1, weight));
+            }
         }
     }
 
@@ -559,20 +583,47 @@ public:
     }
 
     void addEdge(uint32_t first, uint32_t second) override{
-         if(this->isIndexOutOfBounds(first)){
+        // if(this->isIndexOutOfBounds(first)){
+        //     printErrorMsg(2, "The first argument of a method addEdge(uint32_t, uint32_t) in a class ListGraph is out of bounds.");
+        // }
+        // if(this->isIndexOutOfBounds(second)){
+        //     printErrorMsg(2, "The second argument of a method addEdge(uint32_t, uint32_t) in a class ListGraph is out of bounds.");
+        // }
+        // bool flag=false;
+        // if(adjacencyList[first].size()>adjacencyList[second].size()) std::swap(first,second);
+        // for(auto i : adjacencyList[first]){
+        //     if(i==second){
+        //         flag=true;
+        //         break;
+        //     }
+        // }
+        // if(!flag){
+        //     adjacencyList[first].push_back(second);
+        //     if(first!=second){
+        //         adjacencyList[second].push_back(first);
+        //     }
+        // }
+        this->addEdge(first, second, false);
+    }
+
+    void addEdge(uint32_t first, uint32_t second, const bool saveFlag){
+        if(this->isIndexOutOfBounds(first)){
             printErrorMsg(2, "The first argument of a method addEdge(uint32_t, uint32_t) in a class ListGraph is out of bounds.");
         }
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method addEdge(uint32_t, uint32_t) in a class ListGraph is out of bounds.");
         }
         bool flag=false;
-        if(adjacencyList[first].size()>adjacencyList[second].size()) std::swap(first,second);
-        for(auto i : adjacencyList[first]){
-            if(i==second){
-                flag=true;
-                break;
+        if(saveFlag){
+            if(adjacencyList[first].size()>adjacencyList[second].size()) std::swap(first,second);
+            for(auto i : adjacencyList[first]){
+                if(i==second){
+                    flag=true;
+                    break;
+                }
             }
         }
+        
         if(!flag){
             adjacencyList[first].push_back(second);
             if(first!=second){
