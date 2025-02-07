@@ -70,7 +70,7 @@ bool isStronglyConnected(G &g){
     g.transpose();
     counter=1;
     for(uint32_t i=0;i<g.getSize();++i) v[i]=false;
-    while(q.empty()){
+    while(!q.empty()){
         for(uint32_t i : g.getNeighbours(q.front())){
             if(!v[i]){
                 v[i]=true;
@@ -260,6 +260,24 @@ std::vector<int32_t>* bfs(G &g, const uint32_t src, const F &fun){
         q.pop();
     }
     return result;
+}
+
+template<typename G, typename F>
+void bfs(G &g, const uint32_t src, F &f){
+    std::vector<bool>is_visited(false, g.getSize());
+    std::queue<uint32_t>q;
+    q.push(src);
+    is_visited[src]=true;
+    while(!q.empty()){
+        f(q.front());
+        for(uint32_t i : g.getNeighbours(q.front)){
+            if(!is_visited[i]){
+                is_visited[i]=true;
+                q.push(i);
+            }
+        }
+        q.pop();
+    }
 }
 
 template<typename G>
