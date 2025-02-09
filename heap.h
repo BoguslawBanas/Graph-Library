@@ -1,7 +1,7 @@
 #ifndef HEAP_H
 #define HEAP_H
 
-#define CONSOLIDATE_SIZE 34
+#define CONSOLIDATE_SIZE 32
 #define BINOMIAL_HEAP_LIST_SIZE 32
 #include <vector>
 #include <unordered_map>

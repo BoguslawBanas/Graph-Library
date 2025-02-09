@@ -270,7 +270,7 @@ void bfs(G &g, const uint32_t src, F &f){
     is_visited[src]=true;
     while(!q.empty()){
         f(q.front());
-        for(uint32_t i : g.getNeighbours(q.front)){
+        for(uint32_t i : g.getNeighbours(q.front())){
             if(!is_visited[i]){
                 is_visited[i]=true;
                 q.push(i);
