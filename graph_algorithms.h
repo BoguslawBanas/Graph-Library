@@ -348,24 +348,38 @@ std::vector<uint32_t>* bfs_path(G &g, const uint32_t src, const uint32_t destina
     return result;
 }
 
-template<typename G>
-void dfs_preorder(G &g, const uint32_t src, void (*fun)(const uint32_t), std::vector<bool>&is_visited){
-    if(is_visited[src]) return;
-    is_visited[src]=true;
-    fun(src);
-    for(uint32_t i : g.getNeighbours(src)){
-        dfs_preorder(g,i,fun,is_visited);
+namespace{
+    template<typename G, typename F>
+    void dfs_preorder(G &g, const uint32_t src, F &f, std::vector<bool>&is_visited){
+        if(is_visited[src]) return;
+        is_visited[src]=true;
+        f(src);
+        for(uint32_t i : g.getNeighbours(src)){
+            dfs_preorder(g, i, f, is_visited);
+        }
+    }
+
+    template<typename G, typename F>
+    void dfs_postorder(G &g, const uint32_t src, F &f, std::vector<bool>&is_visited){
+        if(is_visited[src]) return;
+        is_visited[src]=true;
+        for(uint32_t i : g.getNeighbours(src)){
+            dfs_postorder(g, i, f, is_visited);
+        }
+        f(src);
     }
 }
 
-template<typename G>
-void dfs_postorder(G &g, const uint32_t src, void (*fun)(const uint32_t), std::vector<bool>&is_visited){
-    if(is_visited[src]) return;
-    is_visited[src]=true;
-    for(uint32_t i : g.getNeighbours(src)){
-        dfs_postorder(g,i,fun,is_visited);
-    }
-    fun(src);
+template<typename G, typename F>
+void dfs_preorder(G &g, const uint32_t src, F &f){
+    std::vector<bool>is_visited(g.getSize(), false);
+    dfs_preorder(g, src, f, is_visited);
+}
+
+template<typename G, typename F>
+void dfs_postorder(G &g, const uint32_t src, F &f){
+    std::vector<bool>is_visited(g.getSize(), false);
+    dfs_postorder<G,F>(g, src, f, is_visited);
 }
 
 template<typename G, typename N, typename PQ>
