@@ -456,8 +456,8 @@ N dijkstra(G &g, const uint32_t src, const uint32_t destination) {
     return distance[destination];
 }
 
-template<typename G, typename N, typename PQ, typename F>
-N dijkstra(G &g, const uint32_t src, const uint32_t destination, const F &fun) {
+template<typename G, typename N, typename PQ>
+N dijkstra(G &g, const uint32_t src, const uint32_t destination, bool (*fun)(const uint32_t, N)) {
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
@@ -508,7 +508,7 @@ std::vector<uint32_t>* dijkstra_path(G &g, const uint32_t src, const uint32_t de
 }
 
 template<typename G, typename N, typename PQ, typename F>
-std::vector<uint32_t>* dijkstra_path(G &g, const uint32_t src, const uint32_t destination, const F &fun) {
+std::vector<uint32_t>* dijkstra_path(G &g, const uint32_t src, const uint32_t destination, bool (*fun)(uint32_t, N)) {
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
@@ -576,8 +576,8 @@ std::unordered_map<uint32_t, N>* dijkstra(G &g, const uint32_t src, const std::v
     return result;
 }
 
-template<typename G, typename N, typename PQ, typename F>
-std::unordered_map<uint32_t, N>* dijkstra(G &g, const uint32_t src, const std::vector<uint32_t> &destinations, const F &fun) {
+template<typename G, typename N, typename PQ>
+std::unordered_map<uint32_t, N>* dijkstra(G &g, const uint32_t src, const std::vector<uint32_t> &destinations, bool (*fun)(uint32_t, N)) {
     N max=g.getMax();
     std::vector<N>distance(g.getSize(), max);
     std::vector<bool>is_visited(g.getSize(), false);
@@ -629,8 +629,8 @@ std::vector<N>* dijkstra(G &g, const uint32_t src) {
     return result;
 }
 
-template<typename G, typename N, typename PQ, typename F>
-std::vector<N>* dijkstra(G &g, const uint32_t src, const F &fun) {
+template<typename G, typename N, typename PQ>
+std::vector<N>* dijkstra(G &g, const uint32_t src, bool (*fun)(uint32_t, N)) {
     N max=g.getMax();
     auto *result=new std::vector<N>(g.getSize(), max);
     std::vector<bool>is_visited(g.getSize(), false);
