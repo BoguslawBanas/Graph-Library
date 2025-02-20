@@ -295,6 +295,25 @@ public:
     }
 
     void addEdge(const uint32_t v1, const uint32_t v2, const N weight) override{
+        // if(this->isIndexOutOfBounds(v1)){
+        //     printErrorMsg(2, "The first argument of a method addEdge(const uint32_t, const uint32_t, const N) in a class ListGraphWeightedAndDirected<N> is out of bounds.");
+        // }
+        // if(this->isIndexOutOfBounds(v2)){
+        //     printErrorMsg(2, "The second argument of a method addEdge(const uint32_t, const uint32_t, const N) in a class ListGraphWeightedAndDirected<N> is out of bounds.");
+        // }
+        // bool flag=false;
+        // for(auto i : adjacencyList[v1]){
+        //     if(i.first==v2){
+        //         i.second==weight;
+        //         flag=true;
+        //         break;
+        //     }
+        // }
+        // if(!flag) adjacencyList[v1].push_back(std::pair<uint32_t,N>(v2,weight));
+        addEdge(v1,v2,weight,false);
+    }
+
+    void addEdge(const uint32_t v1, const uint32_t v2, const N weight, const bool saveFlag){
         if(this->isIndexOutOfBounds(v1)){
             printErrorMsg(2, "The first argument of a method addEdge(const uint32_t, const uint32_t, const N) in a class ListGraphWeightedAndDirected<N> is out of bounds.");
         }
@@ -302,11 +321,13 @@ public:
             printErrorMsg(2, "The second argument of a method addEdge(const uint32_t, const uint32_t, const N) in a class ListGraphWeightedAndDirected<N> is out of bounds.");
         }
         bool flag=false;
-        for(auto i : adjacencyList[v1]){
-            if(i.first==v2){
-                i.second==weight;
-                flag=true;
-                break;
+        if(saveFlag){
+            for(auto i : adjacencyList[v1]){
+                if(i.first==v2){
+                    i.second==weight;
+                    flag=true;
+                    break;
+                }
             }
         }
         if(!flag) adjacencyList[v1].push_back(std::pair<uint32_t,N>(v2,weight));
@@ -440,6 +461,39 @@ public:
     }
 
     void addEdge(uint32_t v1, uint32_t v2, const N weight) override{
+        // if(this->isIndexOutOfBounds(v1)){
+        //     printErrorMsg(2, "The first argument of a method addEdge(uint32_t, uint32_t, const N) in a class ListGraphWeighted<N> is out of bounds.");
+        // }
+        // if(this->isIndexOutOfBounds(v2)){
+        //     printErrorMsg(2, "The second argument of a method addEdge(uint32_t, uint32_t, const N) in a class ListGraphWeighted<N> is out of bounds.");
+        // }
+        // bool flag=false;
+        // if(adjacencyList[v1].size()>adjacencyList[v2].size()) std::swap(v1,v2);
+        // for(auto i : adjacencyList[v1]){
+        //     if(i.first==v2){
+        //         i.second=weight;
+        //         flag=true;
+        //         break;
+        //     }
+        // }
+        // if(flag){
+        //     for(auto i : adjacencyList[v2]){
+        //         if(i.first==v1){
+        //             i.second=weight;
+        //             break;
+        //         }
+        //     }
+        // }
+        // else{
+        //     adjacencyList[v1].push_back(std::pair<uint32_t, N>(v2, weight));
+        //     if(v1!=v2){
+        //         adjacencyList[v2].push_back(std::pair<uint32_t, N>(v1, weight));
+        //     }
+        // }
+        addEdge(v1,v2,weight,false);
+    }
+
+    void addEdge(const uint32_t v1, const uint32_t v2, const N weight, const bool saveFlag){
         if(this->isIndexOutOfBounds(v1)){
             printErrorMsg(2, "The first argument of a method addEdge(uint32_t, uint32_t, const N) in a class ListGraphWeighted<N> is out of bounds.");
         }
@@ -447,14 +501,17 @@ public:
             printErrorMsg(2, "The second argument of a method addEdge(uint32_t, uint32_t, const N) in a class ListGraphWeighted<N> is out of bounds.");
         }
         bool flag=false;
-        if(adjacencyList[v1].size()>adjacencyList[v2].size()) std::swap(v1,v2);
-        for(auto i : adjacencyList[v1]){
-            if(i.first==v2){
-                i.second=weight;
-                flag=true;
-                break;
+        if(saveFlag){
+            if(adjacencyList[v1].size()>adjacencyList[v2].size()) std::swap(v1,v2);
+            for(auto i : adjacencyList[v1]){
+                if(i.first==v2){
+                    i.second=weight;
+                    flag=true;
+                    break;
+                }
             }
         }
+        
         if(flag){
             for(auto i : adjacencyList[v2]){
                 if(i.first==v1){
