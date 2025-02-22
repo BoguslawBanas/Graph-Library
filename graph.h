@@ -5,7 +5,7 @@
 #include <vector>
 #include <cstdio>
 #include <fstream>
-#include <ctime>
+// #include <ctime>
 #include "error_info.h"
 
 class Graph{
@@ -125,10 +125,10 @@ public:
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method deleteEdge(const uint32_t, const uint32_t) in a class ListGraphDirected is out of bounds.");
         }
-        for(uint32_t i=0;i<adjacencyList[first].size();++i){
+        for(int32_t i=0;i<adjacencyList[first].size();++i){
             if(adjacencyList[first][i]==second){
                 adjacencyList[first].erase(adjacencyList[first].begin()+i);
-                return;
+                --i;
             }
         }
     }
@@ -268,10 +268,10 @@ public:
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method deleteEdge(const uint32_t, const uint32_t) in a class ListGraphWeightedAndDirected<N> is out of bounds.");
         }
-        for(uint32_t i=0;i<adjacencyList[first].size();++i){
+        for(int32_t i=0;i<adjacencyList[first].size();++i){
             if(adjacencyList[first][i].first==second){
                 adjacencyList[first].erase(adjacencyList[first].begin()+i);
-                return;
+                --i;
             }
         }
     }
@@ -424,19 +424,21 @@ public:
             printErrorMsg(2, "The second argument of a method deleteEdge(const uint32_t, const uint32_t) in a class ListGraphWeighted<N> is out of bounds.");
         }
         if(adjacencyList[first].size()>adjacencyList[second].size()) std::swap(first, second);
+
         bool flag=false;
-        for(uint32_t i=0;i<adjacencyList[first].size();++i){
+        for(int32_t i=0;i<adjacencyList[first].size();++i){
             if(adjacencyList[first][i].first==second){
                 adjacencyList[first].erase(adjacencyList[first].begin()+i);
                 flag=true;
-                break;
+                --i;
             }
         }
+
         if(flag){
-            for(uint32_t i=0;i<adjacencyList[second].size();++i) {
+            for(int32_t i=0;i<adjacencyList[second].size();++i) {
                 if(adjacencyList[second][i].first==first) {
                     adjacencyList[second].erase(adjacencyList[second].begin()+i);
-                    return;
+                    --i;
                 }
             }
         }
@@ -618,18 +620,20 @@ public:
         }
         if(adjacencyList[first].size()>adjacencyList[second].size()) std::swap(first, second);
         bool flag=false;
-        for(uint32_t i=0;i<adjacencyList[first].size();++i){
+
+        for(int32_t i=0;i<adjacencyList[first].size();++i){
             if(adjacencyList[first][i]==second){
                 adjacencyList[first].erase(adjacencyList[first].begin()+i);
                 flag=true;
-                break;
+                --i;
             }
         }
+
         if(flag){
-            for(uint32_t i=0;i<adjacencyList[second].size();++i) {
+            for(int32_t i=0;i<adjacencyList[second].size();++i) {
                 if(adjacencyList[second][i]==first) {
                     adjacencyList[second].erase(adjacencyList[second].begin()+i);
-                    return;
+                    --i;
                 }
             }
         }
