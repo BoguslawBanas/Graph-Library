@@ -5,7 +5,6 @@
 #include <vector>
 #include <cstdio>
 #include <fstream>
-// #include <ctime>
 #include "error_info.h"
 
 class Graph{
@@ -141,21 +140,6 @@ public:
     }
 
     void addEdge(const uint32_t first, const uint32_t second) override{
-        // if(this->isIndexOutOfBounds(first)){
-        //     printErrorMsg(2, "The first argument of a method addEdge(const uint32_t, const uint32_t) in a class ListGraphDirected is out of bounds.");
-        // }
-        // if(this->isIndexOutOfBounds(second)){
-        //     printErrorMsg(2, "The second argument of a method addEdge(const uint32_t, const uint32_t) in a class ListGraphDirected is out of bounds.");
-        // }
-
-        // bool flag=false;
-        // for(auto i : adjacencyList[first]){
-        //     if(second==i){
-        //         flag=true;
-        //         break;
-        //     }
-        // }
-        // if(!flag) adjacencyList[first].push_back(second);
         this->addEdge(first, second, false);
     }
 
@@ -262,7 +246,7 @@ public:
     }
 
     void deleteEdge(const uint32_t first, const uint32_t second) override{
-         if(this->isIndexOutOfBounds(first)){
+        if(this->isIndexOutOfBounds(first)){
             printErrorMsg(2, "The first argument of a method deleteEdge(const uint32_t, const uint32_t) in a class ListGraphWeightedAndDirected<N> is out of bounds.");
         }
         if(this->isIndexOutOfBounds(second)){
@@ -274,6 +258,27 @@ public:
                 --i;
             }
         }
+    }
+
+    bool deleteEdge(const uint32_t first, const uint32_t second, const N weight){
+        if(this->isIndexOutOfBounds(first)){
+            printErrorMsg(2, "The first argument of a method deleteEdge(const uint32_t, const uint32_t) in a class ListGraphWeightedAndDirected<N> is out of bounds.");
+        }
+        if(this->isIndexOutOfBounds(second)){
+            printErrorMsg(2, "The second argument of a method deleteEdge(const uint32_t, const uint32_t) in a class ListGraphWeightedAndDirected<N> is out of bounds.");
+        }
+
+        bool result=false;
+
+        for(int32_t i=0;i<adjacencyList[first].size();++i){
+            if(adjacencyList[first][i].first==second && adjacencyList[first][i].second==weight){
+                adjacencyList[first].erase(adjacencyList[first].begin()+i);
+                result=true;
+                break;
+            }
+        }
+
+        return result;
     }
 
     std::vector<uint32_t> getNeighbours(const uint32_t vertex) const override{
@@ -295,21 +300,6 @@ public:
     }
 
     void addEdge(const uint32_t v1, const uint32_t v2, const N weight) override{
-        // if(this->isIndexOutOfBounds(v1)){
-        //     printErrorMsg(2, "The first argument of a method addEdge(const uint32_t, const uint32_t, const N) in a class ListGraphWeightedAndDirected<N> is out of bounds.");
-        // }
-        // if(this->isIndexOutOfBounds(v2)){
-        //     printErrorMsg(2, "The second argument of a method addEdge(const uint32_t, const uint32_t, const N) in a class ListGraphWeightedAndDirected<N> is out of bounds.");
-        // }
-        // bool flag=false;
-        // for(auto i : adjacencyList[v1]){
-        //     if(i.first==v2){
-        //         i.second==weight;
-        //         flag=true;
-        //         break;
-        //     }
-        // }
-        // if(!flag) adjacencyList[v1].push_back(std::pair<uint32_t,N>(v2,weight));
         addEdge(v1,v2,weight,false);
     }
 
@@ -340,10 +330,14 @@ public:
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method getWeight(const uint32_t, const uint32_t) in a class ListGraphWeightedAndDirected<N> is out of bounds.");
         }
+
+        N result=this->max;
         for(auto v : adjacencyList[first]) {
-            if(v.first==second) return v.second;
+            if(v.first==second && v.second<result){
+                result=v.second;
+            } 
         }
-        return this->max;
+        return result;
     }
 
     std::vector<std::pair<std::pair<uint32_t, uint32_t>, N>> getListOfEdges() const override {
@@ -444,6 +438,37 @@ public:
         }
     }
 
+    bool deleteEdge(uint32_t first, uint32_t second, const N weight){
+        if(this->isIndexOutOfBounds(first)){
+            printErrorMsg(2, "The first argument of a method deleteEdge(const uint32_t, const uint32_t) in a class ListGraphWeighted<N> is out of bounds.");
+        }
+        if(this->isIndexOutOfBounds(second)){
+            printErrorMsg(2, "The second argument of a method deleteEdge(const uint32_t, const uint32_t) in a class ListGraphWeighted<N> is out of bounds.");
+        }
+
+        bool result=false;
+        if(adjacencyList[first].size()>adjacencyList[second].size()) std::swap(first, second);
+
+        for(int i=0;i<adjacencyList[first].size();++i){
+            if(adjacencyList[first][i].second==weight){
+                adjacencyList[first].erase(adjacencyList[first].begin()+i);
+                result=true;
+                break;
+            }
+        }
+        
+        if(result){
+            for(int i=0;i<adjacencyList[second].size();++i){
+                if(adjacencyList[second][i].second==weight){
+                    adjacencyList[second].erase(adjacencyList[second].begin()+i);
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
     std::vector<uint32_t> getNeighbours(const uint32_t vertex) const override{
         if(this->isIndexOutOfBounds(vertex)){
             printErrorMsg(2, "The argument of a method getNeighbours(const uint32_t) in a class ListGraphWeighted<N> is out of bounds.");
@@ -463,35 +488,6 @@ public:
     }
 
     void addEdge(uint32_t v1, uint32_t v2, const N weight) override{
-        // if(this->isIndexOutOfBounds(v1)){
-        //     printErrorMsg(2, "The first argument of a method addEdge(uint32_t, uint32_t, const N) in a class ListGraphWeighted<N> is out of bounds.");
-        // }
-        // if(this->isIndexOutOfBounds(v2)){
-        //     printErrorMsg(2, "The second argument of a method addEdge(uint32_t, uint32_t, const N) in a class ListGraphWeighted<N> is out of bounds.");
-        // }
-        // bool flag=false;
-        // if(adjacencyList[v1].size()>adjacencyList[v2].size()) std::swap(v1,v2);
-        // for(auto i : adjacencyList[v1]){
-        //     if(i.first==v2){
-        //         i.second=weight;
-        //         flag=true;
-        //         break;
-        //     }
-        // }
-        // if(flag){
-        //     for(auto i : adjacencyList[v2]){
-        //         if(i.first==v1){
-        //             i.second=weight;
-        //             break;
-        //         }
-        //     }
-        // }
-        // else{
-        //     adjacencyList[v1].push_back(std::pair<uint32_t, N>(v2, weight));
-        //     if(v1!=v2){
-        //         adjacencyList[v2].push_back(std::pair<uint32_t, N>(v1, weight));
-        //     }
-        // }
         addEdge(v1,v2,weight,false);
     }
 
@@ -538,10 +534,14 @@ public:
             printErrorMsg(2, "The second argument of a method addEdge(uint32_t, uint32_t, const N) in a class ListGraphWeighted<N> is out of bounds.");
         }
         if(adjacencyList[first].size()>adjacencyList[second].size()) std::swap(first, second);
+        N weight=this->max;
+
         for(auto i : adjacencyList[first]) {
-            if(i.first==second) return i.second;
+            if(i.first==second && i.second<weight){
+                weight=i.second;
+            } 
         }
-        return this->max;
+        return weight;
     }
 
     std::vector<std::pair<std::pair<uint32_t, uint32_t>, N>> getListOfEdges() const override {
@@ -644,26 +644,6 @@ public:
     }
 
     void addEdge(uint32_t first, uint32_t second) override{
-        // if(this->isIndexOutOfBounds(first)){
-        //     printErrorMsg(2, "The first argument of a method addEdge(uint32_t, uint32_t) in a class ListGraph is out of bounds.");
-        // }
-        // if(this->isIndexOutOfBounds(second)){
-        //     printErrorMsg(2, "The second argument of a method addEdge(uint32_t, uint32_t) in a class ListGraph is out of bounds.");
-        // }
-        // bool flag=false;
-        // if(adjacencyList[first].size()>adjacencyList[second].size()) std::swap(first,second);
-        // for(auto i : adjacencyList[first]){
-        //     if(i==second){
-        //         flag=true;
-        //         break;
-        //     }
-        // }
-        // if(!flag){
-        //     adjacencyList[first].push_back(second);
-        //     if(first!=second){
-        //         adjacencyList[second].push_back(first);
-        //     }
-        // }
         this->addEdge(first, second, false);
     }
 
