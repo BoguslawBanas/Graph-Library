@@ -491,7 +491,7 @@ public:
         addEdge(v1,v2,weight,false);
     }
 
-    void addEdge(const uint32_t v1, const uint32_t v2, const N weight, const bool saveFlag){
+    void addEdge(uint32_t v1, uint32_t v2, const N weight, const bool saveFlag){
         if(this->isIndexOutOfBounds(v1)){
             printErrorMsg(2, "The first argument of a method addEdge(uint32_t, uint32_t, const N) in a class ListGraphWeighted<N> is out of bounds.");
         }
