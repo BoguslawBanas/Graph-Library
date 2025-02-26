@@ -254,7 +254,6 @@ std::vector<int32_t>* bfs(G &g, const uint32_t src, const F &fun){
             if(result->at(i)==-1 && fun(i, result->at(q.front()+1))){
                 result->at(i)=result->at(q.front())+1;
                 q.push(i);
-                std::cout<<i<<'\n';
             }
         }
         q.pop();
