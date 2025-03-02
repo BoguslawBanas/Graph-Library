@@ -17,7 +17,7 @@ public:
     virtual uint32_t getSize() const=0;
     // virtual void insert(const uint32_t node, const N value)=0;
     virtual std::pair<uint32_t, N> getMin() const=0;
-    uint32_t void extractMin()=0;
+    uint32_t extractMin()=0;
     // virtual bool doesContain(const uint32_t node)=0;
     // virtual void decreaseKey(const uint32_t node, const N new_value)=0;
 };
