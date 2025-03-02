@@ -13,145 +13,260 @@
 template<typename N>
 class Heap {
 public:
-    virtual bool isEmpty()=0;
-    virtual uint32_t getSize()=0;
-    virtual void insert(const uint32_t node, const N value)=0;
-    virtual std::pair<uint32_t, N> getMin()=0;
-    virtual void extractMin()=0;
-    virtual bool doesContain(const uint32_t node)=0;
-    virtual void decreaseKey(const uint32_t node, const N new_value)=0;
+    virtual bool isEmpty() const=0;
+    virtual uint32_t getSize() const=0;
+    // virtual void insert(const uint32_t node, const N value)=0;
+    virtual std::pair<uint32_t, N> getMin() const=0;
+    uint32_t void extractMin()=0;
+    // virtual bool doesContain(const uint32_t node)=0;
+    // virtual void decreaseKey(const uint32_t node, const N new_value)=0;
 };
+
+// template<typename N>
+// class BinaryHeap : public Heap<N> {
+// private:
+//     std::vector<std::pair<uint32_t, N>>heap;
+//     std::unordered_map<uint32_t, uint32_t>m;
+
+//     void swapNodes(const uint32_t node1, const uint32_t node2){
+//         std::swap(m[heap[node1].first], m[heap[node2].first]);
+//         std::swap(heap[node1], heap[node2]);
+//     }
+
+//     void minHeapify(const int32_t i){
+//         const uint32_t size=this->getSize();
+//         const uint32_t lc=2*i+1;
+//         const uint32_t rc=2*i+2;
+//         uint32_t min=i;
+//         if(lc<size && this->heap[i].second>this->heap[lc].second){
+//             min=lc;
+//         }
+//         if(rc<size && this->heap[min].second>this->heap[rc].second){
+//             min=rc;
+//         }
+
+//         if(min!=i){
+//             this->swapNodes(i, min);
+//             this->minHeapify(min);
+//         }
+//     }
+
+// public:
+//     BinaryHeap() {
+//         heap.clear();
+//     }
+
+//     ~BinaryHeap()=default;
+
+//     uint32_t getSize() override{
+//         return heap.size();
+//     }
+
+//     bool isEmpty() override{
+//         return heap.empty();
+//     }
+
+//     void insert(const uint32_t node, const N value) override {
+//         if(this->doesContain(node)){
+//             printErrorMsg(2, "Trying to insert an element with the same key that exists already in the binary heap.");
+//         }
+//         uint32_t index=heap.size();
+//         heap.push_back(std::pair<uint32_t, N>(node, value));
+//         m[node]=index;
+//         while(index!=0 && heap[(index-1)/2].second>heap[index].second) {
+//             std::swap(m[heap[(index-1)/2].first], m[heap[index].first]);
+//             std::swap(heap[(index-1)/2], heap[index]);
+//             index=(index-1)/2;
+//         }
+//     }
+
+//     std::pair<uint32_t, N> getMin() override {
+//         if(this->isEmpty()){
+//             printErrorMsg(2, "Unable to get the smallest element from an empty binary heap.");
+//         }
+//         return heap[0];
+//     }
+
+//     void extractMin() override {
+//         if(this->isEmpty()){
+//             printErrorMsg(2, "Trying to remove the smallest element from an empty binary heap.");
+//         }
+//         m.erase(heap[0].first);
+//         if(this->getSize()>1){
+//             std::swap(heap[0], heap[heap.size()-1]);
+//             m[heap[0].first]=0;
+//         }
+//         heap.pop_back();
+//         uint32_t index=0;
+//         while(heap.size()>=2*(index+1)) {
+//             if(heap.size()==2*(index+1) && heap[2*index+1].second<=heap[index].second) {
+//                 this->swapNodes(index, 2*index+1);
+//                 break;
+//             }
+//             else if(heap.size()>2*(index+1) && (heap[2*index+1].second<=heap[index].second || heap[2*(index+1)].second<=heap[index].second)) {
+//                 if(heap[2*index+1].second<=heap[2*(index+1)].second) {
+//                     this->swapNodes(index, 2*index+1);
+//                     index=2*index+1;
+//                 }
+//                 else {
+//                     this->swapNodes(index, 2*(index+1));
+//                     index=2*(index+1);
+//                 }
+//             }
+//             else break;
+//         }
+//     }
+
+//     bool doesContain(const uint32_t node) override {
+//         if(m.find(node)!=m.end()) return true;
+//         return false;
+//     }
+
+//     void decreaseKey(const uint32_t node, const N new_value) override {
+//         if(!(this->doesContain(node))){
+//             printErrorMsg(1, "The node is not in the binary heap, so method 'insert(const uint32_t, const N)' will take place");
+//             this->insert(node,new_value);
+//             return;
+//         }
+//         uint32_t index=m[node];
+//         if(heap[index].second<new_value){
+//             printErrorMsg(2, "New value is bigger than original one, so operation 'decreaseKey' cannot take place.");
+//         }
+//         heap[index].second=new_value;
+//         while(index!=0 && heap[(index-1)/2].second>heap[index].second) {
+//             this->swapNodes(index, (index-1)/2);
+//             index=(index-1)/2;
+//         }
+//     }
+
+//     void unionize(BinaryHeap<N> *to_union){
+//         for(auto &i : to_union->heap){
+//             if(this->doesContain(i.first)){
+//                 printErrorMsg(2, "In function unionize (class BinaryHeap) there is already a value with that key.");
+//             }
+//             m[i.first]=this->getSize();
+//             this->heap.push_back(i);
+//         }
+//         const uint32_t size=this->getSize();
+//         for(int32_t i=size/2-1;i>=0;--i){
+//             this->minHeapify(i);
+//         }
+//         delete to_union;
+//     }
+// };
 
 template<typename N>
 class BinaryHeap : public Heap<N> {
+public:
+    struct BinaryHeapNode{
+        uint32_t key;
+        N value;
+        uint32_t position_in_heap;
+
+        BinaryHeapNode(const uint32_t key, const N value, const uint32_t position_in_heap){
+            this->key=key;
+            this->value=value;
+            this->position_in_heap=position_in_heap;
+        }
+    };
 private:
-    std::vector<std::pair<uint32_t, N>>heap;
-    std::unordered_map<uint32_t, uint32_t>m;
+    std::vector<BinaryHeapNode*>heap;
 
     void swapNodes(const uint32_t node1, const uint32_t node2){
-        std::swap(m[heap[node1].first], m[heap[node2].first]);
         std::swap(heap[node1], heap[node2]);
+        heap[node1]->position_in_heap=node2;
+        heap[node2]->position_in_heap=node1;
     }
 
-    void minHeapify(const int32_t i){
-        const uint32_t size=this->getSize();
-        const uint32_t lc=2*i+1;
-        const uint32_t rc=2*i+2;
-        uint32_t min=i;
-        if(lc<size && this->heap[i].second>this->heap[lc].second){
-            min=lc;
+    void siftUp(uint32_t index){
+        int32_t parent_index=(index+1)/2-1;
+        while(index!=0 && this->heap[index]->value<this->heap[parent_index]->value){
+            this->swapNodes(index, parent_index);
+            index=parent_index;
+            parent_index=(index+1)/2-1;
         }
-        if(rc<size && this->heap[min].second>this->heap[rc].second){
-            min=rc;
-        }
+    }
 
-        if(min!=i){
-            this->swapNodes(i, min);
-            this->minHeapify(min);
+    void siftDown(){
+        if(this->getSize()<2){
+            return;
+        }
+        uint32_t index=0;
+        uint32_t smaller_index;
+        while(this->getSize()>=(2*(index+1))){
+            if(this->getSize()==2*(index+1) || this->heap[2*index+1]->value<=this->heap[2*index+2]->value){
+                smaller_index=2*index+1;
+            }
+            else{
+                smaller_index=2*index+2;
+            }
+
+            if(this->heap[smaller_index]->value>this->heap[index]->value){
+                this->swapNodes(index, smaller_index);
+                index=smaller_index;
+            }
+            else{
+                break;
+            }
         }
     }
 
 public:
-    BinaryHeap() {
-        heap.clear();
-    }
+    BinaryHeap()=default;
 
-    ~BinaryHeap()=default;
-
-    uint32_t getSize() override{
-        return heap.size();
-    }
-
-    bool isEmpty() override{
-        return heap.empty();
-    }
-
-    void insert(const uint32_t node, const N value) override {
-        if(this->doesContain(node)){
-            printErrorMsg(2, "Trying to insert an element with the same key that exists already in the binary heap.");
-        }
-        uint32_t index=heap.size();
-        heap.push_back(std::pair<uint32_t, N>(node, value));
-        m[node]=index;
-        while(index!=0 && heap[(index-1)/2].second>heap[index].second) {
-            std::swap(m[heap[(index-1)/2].first], m[heap[index].first]);
-            std::swap(heap[(index-1)/2], heap[index]);
-            index=(index-1)/2;
+    ~BinaryHeap(){
+        for(int32_t i=0;i<this->getSize();++i){
+            delete this->heap[i];
         }
     }
 
-    std::pair<uint32_t, N> getMin() override {
-        if(this->isEmpty()){
-            printErrorMsg(2, "Unable to get the smallest element from an empty binary heap.");
-        }
-        return heap[0];
+    uint32_t getSize() const override {
+        return this->heap.size();
     }
 
-    void extractMin() override {
-        if(this->isEmpty()){
-            printErrorMsg(2, "Trying to remove the smallest element from an empty binary heap.");
+    bool isEmpty() const override {
+        if(this->getSize()==0){
+            return true;
         }
-        m.erase(heap[0].first);
-        if(this->getSize()>1){
-            std::swap(heap[0], heap[heap.size()-1]);
-            m[heap[0].first]=0;
-        }
-        heap.pop_back();
-        uint32_t index=0;
-        while(heap.size()>=2*(index+1)) {
-            if(heap.size()==2*(index+1) && heap[2*index+1].second<=heap[index].second) {
-                this->swapNodes(index, 2*index+1);
-                break;
-            }
-            else if(heap.size()>2*(index+1) && (heap[2*index+1].second<=heap[index].second || heap[2*(index+1)].second<=heap[index].second)) {
-                if(heap[2*index+1].second<=heap[2*(index+1)].second) {
-                    this->swapNodes(index, 2*index+1);
-                    index=2*index+1;
-                }
-                else {
-                    this->swapNodes(index, 2*(index+1));
-                    index=2*(index+1);
-                }
-            }
-            else break;
-        }
-    }
-
-    bool doesContain(const uint32_t node) override {
-        if(m.find(node)!=m.end()) return true;
         return false;
     }
 
-    void decreaseKey(const uint32_t node, const N new_value) override {
-        if(!(this->doesContain(node))){
-            printErrorMsg(1, "The node is not in the binary heap, so method 'insert(const uint32_t, const N)' will take place");
-            this->insert(node,new_value);
-            return;
+    std::pair<uint32_t, N> getMin() const override {
+        if(this->isEmpty()){
+            printErrorMsg(2, "Unable to get the smallest element from an empty binary heap.");
         }
-        uint32_t index=m[node];
-        if(heap[index].second<new_value){
-            printErrorMsg(2, "New value is bigger than original one, so operation 'decreaseKey' cannot take place.");
-        }
-        heap[index].second=new_value;
-        while(index!=0 && heap[(index-1)/2].second>heap[index].second) {
-            this->swapNodes(index, (index-1)/2);
-            index=(index-1)/2;
-        }
+        return std::pair<uint32_t, N>(this->heap[0]->key, this->heap[0]->value);
     }
 
-    void unionize(BinaryHeap<N> *to_union){
-        for(auto &i : to_union->heap){
-            if(this->doesContain(i.first)){
-                printErrorMsg(2, "In function unionize (class BinaryHeap) there is already a value with that key.");
-            }
-            m[i.first]=this->getSize();
-            this->heap.push_back(i);
+    uint32_t extractMin() override {
+        if(this->isEmpty()){
+            printErrorMsg(2, "Trying to remove the smallest element from an empty binary heap.");
         }
-        const uint32_t size=this->getSize();
-        for(int32_t i=size/2-1;i>=0;--i){
-            this->minHeapify(i);
+        const uint32_t value_to_return=this->heap[0]->key;
+        this->swapNodes(0, this->getSize()-1);
+
+        delete this->heap[this->getSize()-1];
+        this->heap.pop_back();
+        this->siftDown();
+
+        return value_to_return;
+    }
+
+    const BinaryHeapNode* const insert(const uint32_t key, const N &value){
+        uint32_t index=this->getSize();
+        BinaryHeapNode *ptr=new BinaryHeapNode(key, value, index);
+        this->heap.push_back(ptr);
+        this->siftUp(index);
+        return ptr;
+    }
+
+    void decreaseKey(const BinaryHeapNode *ptr, const N new_value){
+        if(!ptr){
+            printErrorMsg(2, "DecreaseKey method in a class that represents binary heap received a pointer to NULL.");
         }
-        delete to_union;
+        uint32_t index=ptr->position_in_heap;
+        heap[index]->new_value=new_value;
+        this->siftUp(index);
     }
 };
 
