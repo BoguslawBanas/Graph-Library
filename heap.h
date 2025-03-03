@@ -285,7 +285,7 @@ public:
 
 template<typename N>
 class BinomialHeap : public Heap<N> {
-private:
+public:
     struct BinomialHeapNode{
         uint32_t key;
         N key_value;
@@ -301,10 +301,9 @@ private:
             this->child=this->sibling=this->parent=nullptr;
         }
     };
-
+private:
     BinomialHeapNode *head;
     uint32_t size;
-    std::unordered_map<uint32_t, BinomialHeapNode*>m;
 
     BinomialHeapNode* find_min(){
         if(!this->head) return nullptr;
@@ -383,12 +382,8 @@ public:
         return this->size;
     }
 
-    void insert(const uint32_t node, const N value) override{
-        if(this->doesContain(node)){
-            printErrorMsg(2, "Trying to insert an element with the same key that exists already in the binomial heap.");
-        }
+    const BinomialHeapNode* const insert(const uint32_t node, const N value) {
         BinomialHeapNode *ptr=new BinomialHeapNode(node,value);
-        m[node]=ptr;
         if(this->isEmpty()){
             this->head=ptr;
         }
@@ -398,6 +393,7 @@ public:
             priv_union();
         }
         ++this->size;
+        return ptr;
     }
 
     std::pair<uint32_t, N> getMin() override{
@@ -408,19 +404,20 @@ public:
         return std::pair<uint32_t, N>(min->key, min->key_value);
     }
 
-    void extractMin() override{
+    uint32_t extractMin() override{
         if(this->isEmpty()){
             printErrorMsg(2, "Trying to extract the smallest element from an empty binomial heap.");
         }
         BinomialHeapNode *min=find_min();
-        m.erase(min->key);
+        const uint32_t min_key=min->key;
+
         if(this->getSize()==1){
-            m.clear();
-            delete head;
-            head=nullptr;
-            --this->size;
-            return;
+            delete this->head;
+            this->head=nullptr;
+            this->size=0;
+            return min_key;
         }
+
         BinomialHeapNode *ptr=this->head;
         BinomialHeapNode *children_ptr=min->child;
 
@@ -479,26 +476,18 @@ public:
             ptr=ptr->sibling;
         }
         --this->size;
+        return min_key;
     }
 
-    bool doesContain(const uint32_t node) override{
-        if(m.find(node)!=m.end()) return true;
-        return false;
-    }
-
-    void decreaseKey(const uint32_t node, const N new_value) override {
-        if(!(this->doesContain(node))){
-            printErrorMsg(1, "The node is not in the binomial heap, so method 'insert(const uint32_t, const N)' will take place");
-            this->insert(node, new_value);
-            return;
-        }
-        BinomialHeapNode *ptr=m[node];
+    void decreaseKey(BinomialHeapNode *ptr, const N new_value, BinomialHeapNode *container) {
         if(new_value>ptr->key_value){
             printErrorMsg(2, "New value is bigger than original one, so operation 'decreaseKey' cannot take place.");
         }
         ptr->key_value=new_value;
         while(ptr->parent!=nullptr && ptr->key_value<ptr->parent->key_value){
-            std::swap(m[ptr->key], m[ptr->parent->key]);
+            if(container){
+                std::swap(container[ptr->key], container[ptr->parent->key]);
+            }
             std::swap(ptr->key, ptr->parent->key);
             std::swap(ptr->key_value, ptr->parent->key_value);
             ptr=ptr->parent;
@@ -510,18 +499,18 @@ public:
             delete to_union;
             return;
         }
+
+        BinomialHeapNode *new_min=nullptr;
+        if(to_union->getMin().second<this->getMin().second){
+            new_min=to_union->getMin();
+        }
+        else{
+            new_min=this->getMin();
+        }
         BinomialHeapNode *tmp=head;
         BinomialHeapNode *tmp2=to_union->head;
         BinomialHeapNode *tmp3=nullptr;
         BinomialHeapNode *new_head=nullptr;
-        BinomialHeapNode *min=find_min();
-
-        for(auto &it : to_union->m){
-            if(this->doesContain(it.first)){
-                printErrorMsg(2, "In function unionize (class BinomialHeap) there is already a value with that key.");
-            }
-            m[it.first]=it.second;
-        }
 
         if(tmp->degree<=tmp2->degree){
             tmp3=tmp;
@@ -553,12 +542,10 @@ public:
             tmp2=tmp2->sibling;
             tmp3=tmp3->sibling;
         }
-        if(to_union->getMin().second<this->getMin().second){
-            min=to_union->m[to_union->getMin().first];
-        }
         this->size+=to_union->getSize();
         this->head=new_head;
         this->priv_union();
+        this->min=new_min;
         to_union->head=nullptr;
         delete to_union;
     }
@@ -766,10 +753,10 @@ public:
         --this->size;
     }
 
-    bool doesContain(const uint32_t node) override{
-        if(m.find(node)==m.end()) return false;
-        return true;
-    }
+    // bool doesContain(const uint32_t node) override{
+    //     if(m.find(node)==m.end()) return false;
+    //     return true;
+    // }
 
     void decreaseKey(const uint32_t node, const N value) override {
         if(!(this->doesContain(node))){
