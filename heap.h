@@ -457,14 +457,14 @@ private:
         }
     }
 
-    void consolidate(FibonacciHeapNode *ptr, std::vector<int32_t>&consolidate_arr){
+    void consolidate(FibonacciHeapNode *ptr, std::vector<FibonacciHeapNode*>&consolidate_arr){
         const uint32_t d=ptr->degree;
-        if(consolidate_arr[d]==-1){
-            consolidate_arr[d]=ptr->key;
+        if(!consolidate_arr[d]){
+            consolidate_arr[d]=ptr;
         }
         else{
-            FibonacciHeapNode *ptr2=m[consolidate_arr[d]];
-            consolidate_arr[d]=-1;
+            FibonacciHeapNode *ptr2=consolidate_arr[d];
+            consolidate_arr[d]=nullptr;
             if(ptr->value<ptr2->value){
                 ptr2->parent=ptr;
                 addToList(ptr2, ptr->child);
@@ -541,15 +541,15 @@ public:
         return this->size;
     }
 
-    void insert(const uint32_t node, const N value) override {
+    const FibonacciHeapNode* const insert(const uint32_t node, const N value) {
         if(this->doesContain(node)){
             printErrorMsg(2, "Trying to insert an element with the same key that exists already in the fibonacci heap.");
         }
         FibonacciHeapNode *ptr=new FibonacciHeapNode(node,value);
-        m[node]=ptr;
         addToList(ptr,this->min);
         if(this->min==nullptr || this->min->value>value) this->min=ptr;
         ++this->size;
+        return ptr;
     }
 
     std::pair<uint32_t,N> getMin() override {
@@ -559,14 +559,17 @@ public:
         return std::pair<uint32_t,N> (this->min->key, this->min->value);
     }
 
-    void extractMin() override{
-        if(this->isEmpty()) printErrorMsg(2, "Trying to extract the smallest element from an empty fibonacci heap.");
-        m.erase(min->key);
+    uint32_t extractMin() override{
+        if(this->isEmpty()){
+            printErrorMsg(2, "Trying to extract the smallest element from an empty fibonacci heap.");
+        }
+
+        const uint32_t return_key=this->min->key;
         if(this->size==1){
-            delete min;
-            min=nullptr;
-            --this->size;
-            return;
+            delete this->min;
+            this->min=nullptr;
+            this->size=0;
+            return return_key;
         } 
 
         FibonacciHeapNode *p=this->min->child;
@@ -587,23 +590,25 @@ public:
         delete min;
         this->min=p;
 
-        std::vector<int32_t>consolidate_arr(CONSOLIDATE_SIZE, -1);
-        std::vector<uint32_t>tmp_arr;
+        // std::vector<int32_t>consolidate_arr(CONSOLIDATE_SIZE, -1);
+        std::vector<FibonacciHeapNode*>consolidate_arr(CONSOLIDATE_SIZE, nullptr);
+        // std::vector<uint32_t>tmp_arr;
+        std::vector<FibonacciHeapNode*>tmp_arr;
         FibonacciHeapNode *it=this->min;
         do{
-            tmp_arr.push_back(it->key);
+            tmp_arr.push_back(it);
             it=it->right_s;
         }while(it!=this->min);
         
-        for(uint32_t i : tmp_arr){
-            consolidate(m[i], consolidate_arr);
+        for(FibonacciHeapNode* i : tmp_arr){
+            consolidate(i, consolidate_arr);
         }
 
         this->min=nullptr;
 
         for(uint32_t i=0;i<CONSOLIDATE_SIZE;++i){
             if(consolidate_arr[i]!=-1){
-                FibonacciHeapNode *ptr=m[consolidate_arr[i]];
+                FibonacciHeapNode *ptr=consolidate_arr[i];
                 if(this->min==nullptr){
                     addToList(ptr, this->min);
                     this->min=ptr;
@@ -617,40 +622,23 @@ public:
         --this->size;
     }
 
-    // bool doesContain(const uint32_t node) override{
-    //     if(m.find(node)==m.end()) return false;
-    //     return true;
-    // }
-
-    void decreaseKey(const uint32_t node, const N value) override {
-        if(!(this->doesContain(node))){
-            printErrorMsg(1, "The node is not in the fibonacci heap, so method 'insert(const uint32_t, const N)' will take place");
-            this->insert(node, value);
-            return;
-        }
-        FibonacciHeapNode *ptr=m[node];
-        if(value>ptr->value){
+    void decreaseKey(FibonacciHeapNode *ptr, const N new_value) override {
+        if(new_value>ptr->value){
             printErrorMsg(2, "New value is bigger than original one, so operation 'decreaseKey' cannot take place.");
         }
-        ptr->value=value;
-        if(ptr->parent!=nullptr && value<ptr->parent->value){
+        ptr->value=new_value;
+        if(ptr->parent!=nullptr && new_value<ptr->parent->value){
             FibonacciHeapNode *p=ptr->parent;
             cutNode(ptr);
             cascadingCutNode(p);
         }
-        if(this->min->value>value) this->min=ptr;
+        if(this->min->value>new_value) this->min=ptr;
     }
 
     void unionize(FibonacciHeap *to_union) {
         if(to_union->isEmpty()){
             delete to_union;
             return;
-        }
-        for(auto &it : to_union->m){
-            if(this->doesContain(it.first)){
-                printErrorMsg(2, "In function unionize (class FibonacciHeap) there is already a value with that key.");
-            }
-            m[it.first]=it.second;
         }
 
         FibonacciHeapNode *minPtr=to_union->min;
