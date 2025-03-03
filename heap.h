@@ -418,7 +418,7 @@ public:
 
 template<typename N>
 class FibonacciHeap : public Heap<N> {
-private:
+public:
     struct FibonacciHeapNode{
         uint32_t key;
         N value;
@@ -437,9 +437,9 @@ private:
             this->mark=false;
         }
     };
-
+    
+private:
     FibonacciHeapNode *min;
-    std::unordered_map<uint32_t, FibonacciHeapNode*>m;
     uint32_t size;
 
     void addToList(FibonacciHeapNode *ptr, FibonacciHeapNode *listNode){
