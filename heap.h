@@ -169,8 +169,10 @@ private:
     BinomialHeapNode *head;
     uint32_t size;
 
-    BinomialHeapNode* find_min(){
-        if(!this->head) return nullptr;
+    BinomialHeapNode* find_min() const{
+        if(!this->head){
+            return nullptr;
+        }
         BinomialHeapNode *result=this->head;
         BinomialHeapNode *ptr=this->head->sibling;
 
@@ -238,11 +240,11 @@ public:
         priv_dfs(this->head);
     }
 
-    bool isEmpty() override {
+    bool isEmpty() const override {
         return this->size==0;
     }
 
-    uint32_t getSize() override {
+    uint32_t getSize() const override {
         return this->size;
     }
 
@@ -260,11 +262,11 @@ public:
         return ptr;
     }
 
-    std::pair<uint32_t, N> getMin() override{
+    std::pair<uint32_t, N> getMin() const override{
         if(this->isEmpty()){
             printErrorMsg(2, "Trying to get the smallest element from an empty binomial heap.");
         }
-        BinomialHeapNode *min=find_min();
+        BinomialHeapNode *min=this->find_min();
         return std::pair<uint32_t, N>(min->key, min->key_value);
     }
 
@@ -272,7 +274,7 @@ public:
         if(this->isEmpty()){
             printErrorMsg(2, "Trying to extract the smallest element from an empty binomial heap.");
         }
-        BinomialHeapNode *min=find_min();
+        BinomialHeapNode *min=this->find_min();
         const uint32_t min_key=min->key;
 
         if(this->getSize()==1){
@@ -531,19 +533,16 @@ public:
         priv_dfs(this->min);
     }
 
-    bool isEmpty() override {
+    bool isEmpty() const override {
         if(this->getSize()==0) return true;
         return false;
     }
 
-    uint32_t getSize() override {
+    uint32_t getSize() const override {
         return this->size;
     }
 
     const FibonacciHeapNode* const insert(const uint32_t node, const N value) {
-        if(this->doesContain(node)){
-            printErrorMsg(2, "Trying to insert an element with the same key that exists already in the fibonacci heap.");
-        }
         FibonacciHeapNode *ptr=new FibonacciHeapNode(node,value);
         addToList(ptr,this->min);
         if(this->min==nullptr || this->min->value>value) this->min=ptr;
@@ -551,7 +550,7 @@ public:
         return ptr;
     }
 
-    std::pair<uint32_t,N> getMin() override {
+    std::pair<uint32_t,N> getMin() const override {
         if(this->isEmpty()){
             printErrorMsg(2, "Trying to get the smallest element from an empty fibonacci heap.");
         }
@@ -604,7 +603,7 @@ public:
         this->min=nullptr;
 
         for(uint32_t i=0;i<CONSOLIDATE_SIZE;++i){
-            if(consolidate_arr[i]!=-1){
+            if(consolidate_arr[i]){
                 FibonacciHeapNode *ptr=consolidate_arr[i];
                 if(this->min==nullptr){
                     addToList(ptr, this->min);
@@ -619,7 +618,7 @@ public:
         --this->size;
     }
 
-    void decreaseKey(FibonacciHeapNode *ptr, const N new_value) override {
+    void decreaseKey(FibonacciHeapNode *ptr, const N new_value) {
         if(new_value>ptr->value){
             printErrorMsg(2, "New value is bigger than original one, so operation 'decreaseKey' cannot take place.");
         }
