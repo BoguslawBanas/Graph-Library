@@ -17,7 +17,7 @@ public:
     virtual uint32_t getSize() const=0;
     // virtual void insert(const uint32_t node, const N value)=0;
     virtual std::pair<uint32_t, N> getMin() const=0;
-    uint32_t extractMin()=0;
+    virtual uint32_t extractMin()=0;
     // virtual bool doesContain(const uint32_t node)=0;
     // virtual void decreaseKey(const uint32_t node, const N new_value)=0;
 };
@@ -201,7 +201,7 @@ private:
                 smaller_index=2*index+2;
             }
 
-            if(this->heap[smaller_index]->value>this->heap[index]->value){
+            if(this->heap[smaller_index]->value<this->heap[index]->value){
                 this->swapNodes(index, smaller_index);
                 index=smaller_index;
             }
@@ -209,6 +209,12 @@ private:
                 break;
             }
         }
+    }
+
+    void insert(BinaryHeapNode *ptr){
+        ptr->position_in_heap=this->heap.size();
+        heap.push_back(ptr);
+        this->siftUp(ptr->position_in_heap);
     }
 
 public:
@@ -267,6 +273,13 @@ public:
         uint32_t index=ptr->position_in_heap;
         heap[index]->new_value=new_value;
         this->siftUp(index);
+    }
+
+    void unionize(BinaryHeap *heap_to_union){
+        uint32_t size_heap_to_union=heap_to_union->heap.size();
+        for(int i=0;i<size_heap_to_union;++i){
+            this->insert(heap_to_union->heap[i]);
+        }
     }
 };
 
