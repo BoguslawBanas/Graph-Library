@@ -524,7 +524,6 @@ private:
 public:
     FibonacciHeap() {
         this->min=nullptr;
-        m.clear();
         size=0;
     }
 
@@ -590,9 +589,7 @@ public:
         delete min;
         this->min=p;
 
-        // std::vector<int32_t>consolidate_arr(CONSOLIDATE_SIZE, -1);
         std::vector<FibonacciHeapNode*>consolidate_arr(CONSOLIDATE_SIZE, nullptr);
-        // std::vector<uint32_t>tmp_arr;
         std::vector<FibonacciHeapNode*>tmp_arr;
         FibonacciHeapNode *it=this->min;
         do{
