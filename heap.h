@@ -147,276 +147,6 @@ public:
     }
 };
 
-// template<typename N>
-// class BinomialHeap : public Heap<N> {
-// public:
-//     struct BinomialHeapNode{
-//         uint32_t key;
-//         N key_value;
-//         uint32_t degree;
-//         BinomialHeapNode *child;
-//         BinomialHeapNode *sibling;
-//         BinomialHeapNode *parent;
-
-//         BinomialHeapNode(const uint32_t key, const N value){
-//             this->key=key;
-//             this->key_value=value;
-//             this->degree=0;
-//             this->child=this->sibling=this->parent=nullptr;
-//         }
-//     };
-// private:
-//     BinomialHeapNode *head;
-//     uint32_t size;
-
-//     BinomialHeapNode* find_min() const{
-//         if(!this->head){
-//             return nullptr;
-//         }
-//         BinomialHeapNode *result=this->head;
-//         BinomialHeapNode *ptr=this->head->sibling;
-
-//         while(ptr){
-//             if(ptr->key_value<result->key_value) result=ptr;
-//             ptr=ptr->sibling;
-//         }
-//         return result;
-//     }
-
-//     void priv_union(){
-//         BinomialHeapNode *ptr=this->head;
-//         BinomialHeapNode *prev=nullptr;
-//         BinomialHeapNode *nxt=this->head->sibling;
-//         while(nxt!=nullptr){
-//             if(ptr->degree!=nxt->degree){
-//                 prev=ptr;
-//                 ptr=ptr->sibling;
-//                 nxt=ptr->sibling;
-//             }
-//             else if(ptr->sibling->sibling!=nullptr && ptr->degree==nxt->degree && nxt->degree==nxt->sibling->degree){
-//                 prev=ptr;
-//                 ptr=ptr->sibling;
-//                 nxt=ptr->sibling;
-//             }
-//             else if(ptr->degree==nxt->degree && ptr->key_value<=nxt->key_value){
-//                 ptr->sibling=nxt->sibling;
-//                 nxt->sibling=ptr->child;
-//                 ptr->child=nxt;
-//                 nxt->parent=ptr;
-//                 nxt=ptr->sibling;
-//                 ++ptr->degree;
-//             }
-//             else{
-//                 if(prev==nullptr) this->head=nxt;
-//                 else prev->sibling=nxt;
-//                 ptr->sibling=nxt->child;
-//                 nxt->child=ptr;
-//                 ptr->parent=nxt;
-//                 ++nxt->degree;
-//                 ptr=nxt;
-//                 nxt=ptr->sibling;
-//             }
-//         }
-//     }
-
-//     void priv_dfs(BinomialHeapNode *ptr){
-//         if(ptr==nullptr) return;
-//         BinomialHeapNode *ptr2=nullptr;
-//         do{
-//             ptr2=ptr->sibling;
-//             priv_dfs(ptr->child);
-//             delete ptr;
-//             ptr=ptr2;
-//         }while(ptr!=nullptr);
-//     }
-
-// public:
-//     BinomialHeap() {
-//         this->size=0;
-//         head=nullptr;
-//     }
-
-//     ~BinomialHeap(){
-//         priv_dfs(this->head);
-//     }
-
-//     bool isEmpty() const override {
-//         return this->size==0;
-//     }
-
-//     uint32_t getSize() const override {
-//         return this->size;
-//     }
-
-//     const BinomialHeapNode* const insert(const uint32_t node, const N value) {
-//         BinomialHeapNode *ptr=new BinomialHeapNode(node,value);
-//         if(this->isEmpty()){
-//             this->head=ptr;
-//         }
-//         else{
-//             ptr->sibling=this->head;
-//             this->head=ptr;
-//             priv_union();
-//         }
-//         ++this->size;
-//         return ptr;
-//     }
-
-//     std::pair<uint32_t, N> getMin() const override{
-//         if(this->isEmpty()){
-//             printErrorMsg(2, "Trying to get the smallest element from an empty binomial heap.");
-//         }
-//         BinomialHeapNode *min=this->find_min();
-//         return std::pair<uint32_t, N>(min->key, min->key_value);
-//     }
-
-//     uint32_t extractMin() override{
-//         if(this->isEmpty()){
-//             printErrorMsg(2, "Trying to extract the smallest element from an empty binomial heap.");
-//         }
-//         BinomialHeapNode *min=this->find_min();
-//         const uint32_t min_key=min->key;
-
-//         if(this->getSize()==1){
-//             delete this->head;
-//             this->head=nullptr;
-//             this->size=0;
-//             return min_key;
-//         }
-
-//         BinomialHeapNode *ptr=this->head;
-//         BinomialHeapNode *children_ptr=min->child;
-
-//         std::vector<BinomialHeapNode*>tmp_children;
-//         std::vector<BinomialHeapNode*>tmp_heads;
-//         std::vector<BinomialHeapNode*>new_list;
-
-//         while(children_ptr!=nullptr){
-//             tmp_children.push_back(children_ptr);
-//             children_ptr=children_ptr->sibling;
-//         }
-
-//         while(ptr!=nullptr){
-//             if(ptr!=min){
-//                 tmp_heads.push_back(ptr);
-//             }
-//             ptr=ptr->sibling;
-//         }
-
-//         delete min;
-
-//         int32_t i=tmp_children.size()-1;
-//         int32_t j=0;
-
-//         while(i>=0 && j<tmp_heads.size()){
-//             if(tmp_heads[j]->degree<tmp_children[i]->degree){
-//                 new_list.push_back(tmp_heads[j]);
-//                 ++j;
-//             }
-//             else{
-//                 new_list.push_back(tmp_children[i]);
-//                 --i;
-//             }
-//         }
-//         while(i>=0){
-//             new_list.push_back(tmp_children[i]);
-//             --i;
-//         }
-//         while(j<tmp_heads.size()){
-//             new_list.push_back(tmp_heads[j]);
-//             ++j;
-//         }
-
-//         this->head=min=new_list[0];
-//         new_list.back()->sibling=nullptr;
-//         for(uint32_t k=1;k<new_list.size();++k){
-//             new_list[k-1]->sibling=new_list[k];
-//             if(min->key_value>new_list[k]->key_value){
-//                 min=new_list[k];
-//             }
-//         }
-//         priv_union();
-//         ptr=this->head;
-//         while(ptr){
-//             ptr->parent=nullptr;
-//             ptr=ptr->sibling;
-//         }
-//         --this->size;
-//         return min_key;
-//     }
-
-//     void decreaseKey(BinomialHeapNode *ptr, const N new_value, BinomialHeapNode *container) {
-//         if(new_value>ptr->key_value){
-//             printErrorMsg(2, "New value is bigger than original one, so operation 'decreaseKey' cannot take place.");
-//         }
-//         ptr->key_value=new_value;
-//         while(ptr->parent!=nullptr && ptr->key_value<ptr->parent->key_value){
-//             if(container){
-//                 std::swap(container[ptr->key], container[ptr->parent->key]);
-//             }
-//             std::swap(ptr->key, ptr->parent->key);
-//             std::swap(ptr->key_value, ptr->parent->key_value);
-//             ptr=ptr->parent;
-//         }
-//     }
-
-//     void unionize(BinomialHeap *to_union) {
-//         if(to_union->isEmpty()){
-//             delete to_union;
-//             return;
-//         }
-
-//         BinomialHeapNode *new_min=nullptr;
-//         if(to_union->getMin().second<this->getMin().second){
-//             new_min=to_union->getMin();
-//         }
-//         else{
-//             new_min=this->getMin();
-//         }
-//         BinomialHeapNode *tmp=head;
-//         BinomialHeapNode *tmp2=to_union->head;
-//         BinomialHeapNode *tmp3=nullptr;
-//         BinomialHeapNode *new_head=nullptr;
-
-//         if(tmp->degree<=tmp2->degree){
-//             tmp3=tmp;
-//             tmp=tmp->sibling;
-//         }
-//         else{
-//             tmp3=tmp2;
-//             tmp2=tmp2->sibling;
-//         }
-//         new_head=tmp3;
-//         while(tmp!=nullptr && tmp2!=nullptr){
-//             if(tmp->degree<=tmp2->degree){
-//                 tmp3->sibling=tmp;
-//                 tmp=tmp->sibling;
-//             }
-//             else{
-//                 tmp3->sibling=tmp2;
-//                 tmp2=tmp2->sibling;
-//             }
-//             tmp3=tmp3->sibling;
-//         }
-//         while(tmp!=nullptr){
-//             tmp3->sibling=tmp;
-//             tmp=tmp->sibling;
-//             tmp3=tmp3->sibling;
-//         }
-//         while(tmp2!=nullptr){
-//             tmp3->sibling=tmp2;
-//             tmp2=tmp2->sibling;
-//             tmp3=tmp3->sibling;
-//         }
-//         this->size+=to_union->getSize();
-//         this->head=new_head;
-//         this->priv_union();
-//         this->min=new_min;
-//         to_union->head=nullptr;
-//         delete to_union;
-//     }
-// };
-
 template<typename N>
 class BinomialHeap : public Heap<N> {
 public:
@@ -424,63 +154,184 @@ public:
         uint32_t key;
         N value;
         BinomialHeapNode *parent;
-        BinomialHeapNode *left_s;
-        BinomialHeapNode *right_s;
-        BinomialHeapNode *child;
         uint32_t degree;
+        std::vector<BinomialHeapNode*>*children;
+        std::vector<BinomialHeapNode*>*ptr_to_list;
 
         BinomialHeapNode(const uint32_t key, const N value){
             this->key=key;
             this->value=value;
             this->degree=0;
-            this->parent=this->left_s=this->right_s=this->child=nullptr;
+            this->parent=nullptr;
+            this->children=new std::vector<BinomialHeapNode*>();
+            this->ptr_to_list=nullptr;
         }
     };
 
 private:
     uint32_t size;
-    BinomialHeapNode *head;
+    std::vector<BinomialHeapNode*>list_of_heads;
 
-    void dfs_delete(){
+    BinomialHeapNode* mergeNodes(BinomialHeapNode *ptr1, BinomialHeapNode *ptr2){
+        BinomialHeapNode *result;
+        if(ptr1->value<ptr2->value){
+            ptr1->children->push_back(ptr2);
+            ptr2->ptr_to_list=ptr1->children;
+            result=ptr1;
+            ++ptr1->degree;
+        }
+        else{
+            ptr2->children->push_back(ptr1);
+            ptr1->ptr_to_list=ptr2->children;
+            result=ptr2;
+            ++ptr2->degree;
+        }
+        return result;
+    }
 
+    void mergeLists(std::vector<BinomialHeapNode*>*list_to_merge){
+        if(list_to_merge->size()==0){
+            return;
+        }
+        uint32_t i=0;
+        BinomialHeapNode *ptrFlag=nullptr;
+        std::vector<BinomialHeapNode*>mergedList(BINOMIAL_HEAP_LIST_SIZE, nullptr);
+        while(i<list_to_merge->size()){
+            if(ptrFlag && !this->list_of_heads[i] && !list_to_merge->at(i)){
+                mergedList[i]=ptrFlag;
+                ptrFlag=nullptr;
+            }
+            else if(!ptrFlag && this->list_of_heads[i] && !list_to_merge->at(i)){
+                mergedList[i]=this->list_of_heads[i];
+            }
+            else if(!ptrFlag && !this->list_of_heads[i] && list_to_merge->at(i)){
+                mergedList[i]=list_to_merge->at(i);
+            }
+            else if(ptrFlag && this->list_of_heads[i] && !list_to_merge->at(i)){
+                ptrFlag=this->mergeNodes(ptrFlag, this->list_of_heads[i]);
+            }
+            else if(ptrFlag && !this->list_of_heads[i] && list_to_merge->at(i)){
+                ptrFlag=this->mergeNodes(ptrFlag, list_to_merge->at(i));
+            }
+            else if(!ptrFlag && this->list_of_heads[i] && list_to_merge->at(i)){
+                ptrFlag=this->mergeNodes(this->list_of_heads[i], list_to_merge->at(i));
+            }
+            else if(ptrFlag && this->list_of_heads[i] && list_to_merge->at(i)){
+                mergedList[i]=ptrFlag;
+                ptrFlag=this->mergeNodes(this->list_of_heads[i], list_to_merge->at(i));
+            }
+            ++i;
+        }
+
+        while(i<BINOMIAL_HEAP_LIST_SIZE && ptrFlag){
+            if(this->list_of_heads[i]){
+                ptrFlag=this->mergeNodes(ptrFlag, this->list_of_heads[i]);
+            }
+            else{
+                mergedList[i]=ptrFlag;
+                ptrFlag=nullptr;
+            }
+            ++i;
+        }
+
+        while(i<BINOMIAL_HEAP_LIST_SIZE){
+            mergedList[i]=this->list_of_heads[i];
+            ++i;
+        }
+        this->list_of_heads=mergedList;
+    }
+
+    BinomialHeapNode *findMin() const{
+        BinomialHeapNode *result=this->list_of_heads[0];
+        for(uint32_t i=1;i<BINOMIAL_HEAP_LIST_SIZE;++i){
+            if(this->list_of_heads[i] && (!result || this->list_of_heads[i]->value<result->value)){
+                result=this->list_of_heads[i];
+            }
+        }
+        return result;
+    }
+
+    void dfsDelete(BinomialHeapNode *ptr){
+        if(!ptr){
+            return;
+        }
+        for(uint32_t i=0;i<ptr->children->size();++i){
+            this->dfsDelete(ptr->children->at(i));
+        }
     }
 
 public:
     BinomialHeap(){
         this->size=0;
-        this->head=nullptr;
+        this->list_of_heads=std::vector<BinomialHeapNode*>(BINOMIAL_HEAP_LIST_SIZE, nullptr);
     }
 
     ~BinomialHeap(){
-        this->dfs_delete();
+        for(uint32_t i=0;i<BINOMIAL_HEAP_LIST_SIZE;++i){
+            this->dfsDelete(this->list_of_heads[i]);
+        }
+        this->list_of_heads.clear();
     }
 
     bool isEmpty() const override {
-
+        if(this->getSize()==0){
+            return true;
+        }
+        return false;
     }
 
     uint32_t getSize() const override {
-
+        return this->size;
     }
 
     std::pair<uint32_t, N> getMin() const override {
-
+        if(this->isEmpty()){
+            printErrorMsg(2, "Trying to get the smallest element from an empty binomial heap.");
+        }
+        BinomialHeapNode *result=this->findMin();
+        return std::pair<uint32_t, N>(result->key, result->value);
     }
 
     uint32_t extractMin() override {
-
+        BinomialHeapNode *min=this->findMin();
+        const uint32_t key_to_return=min->key;
+        std::vector<BinomialHeapNode*>*list_of_c=min->children;
+        this->list_of_heads[min->degree]=nullptr;
+        delete min;
+        this->mergeLists(list_of_c);
+        --this->size;
+        return key_to_return;
     }
 
     const BinomialHeapNode* const insert(const uint32_t key, const N value) {
-
+        BinomialHeapNode *ptr=new BinomialHeapNode(key, value);
+        ptr->ptr_to_list=&(this->list_of_heads);
+        BinomialHeapNode *r_tpr=ptr;
+        while(this->list_of_heads[ptr->degree]){
+            ptr=this->mergeNodes(ptr, this->list_of_heads[ptr->degree]);
+            this->list_of_heads[ptr->degree-1]=nullptr;
+        }
+        this->list_of_heads[ptr->degree]=ptr;
+        ++this->size;
+        return r_tpr;
     }
 
-    void decreaseKey() {
-
+    void decreaseKey(BinomialHeapNode *ptr, const N new_value) {
+        if(new_value>ptr->key_value){
+            printErrorMsg(2, "New value is bigger than original one, so operation 'decreaseKey' cannot take place.");
+        }
+        ptr->value=new_value;
+        BinomialHeapNode *ptr_p=ptr->parent;
+        while(ptr_p && ptr->value<ptr_p->value){
+            std::swap(ptr->ptr_to_list->at(ptr->degree), ptr_p->ptr_to_list->at(ptr_p->degree));
+            std::swap(ptr->ptr_to_list, ptr_p->ptr_to_list);
+            ptr=ptr_p;
+            ptr_p=ptr->parent;
+        }
     }
 
-    void unionize() {
-
+    void unionize(BinomialHeap *bh) {
+        
     }
 };
 
