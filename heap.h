@@ -4,9 +4,7 @@
 #define CONSOLIDATE_SIZE 32
 #define BINOMIAL_HEAP_LIST_SIZE 32
 #include <vector>
-// #include <unordered_map>
 #include <algorithm>
-// #include <cmath>
 #include <cstdint>
 #include "error_info.h"
 
@@ -225,58 +223,6 @@ private:
         this->list_of_heads=mergedList;
     }
 
-    void mergeLists(std::vector<BinomialHeapNode*>*list_to_merge){
-        if(list_to_merge->size()==0){
-            return;
-        }
-        uint32_t i=0;
-        BinomialHeapNode *ptrFlag=nullptr;
-        std::vector<BinomialHeapNode*>mergedList(BINOMIAL_HEAP_LIST_SIZE, nullptr);
-        while(i<list_to_merge->size()){
-            if(ptrFlag && !this->list_of_heads[i] && !list_to_merge->at(i)){
-                mergedList[i]=ptrFlag;
-                ptrFlag=nullptr;
-            }
-            else if(!ptrFlag && this->list_of_heads[i] && !list_to_merge->at(i)){
-                mergedList[i]=this->list_of_heads[i];
-            }
-            else if(!ptrFlag && !this->list_of_heads[i] && list_to_merge->at(i)){
-                mergedList[i]=list_to_merge->at(i);
-            }
-            else if(ptrFlag && this->list_of_heads[i] && !list_to_merge->at(i)){
-                ptrFlag=this->mergeNodes(ptrFlag, this->list_of_heads[i]);
-            }
-            else if(ptrFlag && !this->list_of_heads[i] && list_to_merge->at(i)){
-                ptrFlag=this->mergeNodes(ptrFlag, list_to_merge->at(i));
-            }
-            else if(!ptrFlag && this->list_of_heads[i] && list_to_merge->at(i)){
-                ptrFlag=this->mergeNodes(this->list_of_heads[i], list_to_merge->at(i));
-            }
-            else if(ptrFlag && this->list_of_heads[i] && list_to_merge->at(i)){
-                mergedList[i]=ptrFlag;
-                ptrFlag=this->mergeNodes(this->list_of_heads[i], list_to_merge->at(i));
-            }
-            ++i;
-        }
-
-        while(i<BINOMIAL_HEAP_LIST_SIZE && ptrFlag){
-            if(this->list_of_heads[i]){
-                ptrFlag=this->mergeNodes(ptrFlag, this->list_of_heads[i]);
-            }
-            else{
-                mergedList[i]=ptrFlag;
-                ptrFlag=nullptr;
-            }
-            ++i;
-        }
-
-        while(i<BINOMIAL_HEAP_LIST_SIZE){
-            mergedList[i]=this->list_of_heads[i];
-            ++i;
-        }
-        this->list_of_heads=mergedList;
-    }
-
     BinomialHeapNode *findMin() const{
         BinomialHeapNode *result=this->list_of_heads[0];
         for(uint32_t i=1;i<BINOMIAL_HEAP_LIST_SIZE;++i){
@@ -331,8 +277,13 @@ public:
     uint32_t extractMin() override {
         BinomialHeapNode *min=this->findMin();
         const uint32_t key_to_return=min->key;
-        std::vector<BinomialHeapNode*>*list_of_c=min->children;
+        std::vector<BinomialHeapNode*>list_of_c(BINOMIAL_HEAP_LIST_SIZE, nullptr);
+        for(uint32_t i=0;i<min->children->size();++i){
+            list_of_c[min->children->at(i)->degree]=min->children->at(i);
+        }
         this->list_of_heads[min->degree]=nullptr;
+        min->children->clear();
+        delete min->children;
         delete min;
         this->mergeLists(list_of_c);
         --this->size;
