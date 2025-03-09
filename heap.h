@@ -4,9 +4,9 @@
 #define CONSOLIDATE_SIZE 32
 #define BINOMIAL_HEAP_LIST_SIZE 32
 #include <vector>
-#include <unordered_map>
+// #include <unordered_map>
 #include <algorithm>
-#include <cmath>
+// #include <cmath>
 #include <cstdint>
 #include "error_info.h"
 
@@ -189,6 +189,42 @@ private:
         return result;
     }
 
+    void mergeLists(std::vector<BinomialHeapNode*>&list_to_merge){
+        if(list_to_merge.size()==0){
+            return;
+        }
+        uint32_t i=0;
+        BinomialHeapNode *ptrFlag=nullptr;
+        std::vector<BinomialHeapNode*>mergedList(BINOMIAL_HEAP_LIST_SIZE, nullptr);
+        while(i<BINOMIAL_HEAP_LIST_SIZE){
+            if(ptrFlag && !this->list_of_heads[i] && !list_to_merge[i]){
+                mergedList[i]=ptrFlag;
+                ptrFlag=nullptr;
+            }
+            else if(!ptrFlag && this->list_of_heads[i] && !list_to_merge[i]){
+                mergedList[i]=this->list_of_heads[i];
+            }
+            else if(!ptrFlag && !this->list_of_heads[i] && list_to_merge[i]){
+                mergedList[i]=list_to_merge[i];
+            }
+            else if(ptrFlag && this->list_of_heads[i] && !list_to_merge[i]){
+                ptrFlag=this->mergeNodes(ptrFlag, this->list_of_heads[i]);
+            }
+            else if(ptrFlag && !this->list_of_heads[i] && list_to_merge[i]){
+                ptrFlag=this->mergeNodes(ptrFlag, list_to_merge[i]);
+            }
+            else if(!ptrFlag && this->list_of_heads[i] && list_to_merge[i]){
+                ptrFlag=this->mergeNodes(this->list_of_heads[i], list_to_merge[i]);
+            }
+            else if(ptrFlag && this->list_of_heads[i] && list_to_merge[i]){
+                mergedList[i]=ptrFlag;
+                ptrFlag=this->mergeNodes(this->list_of_heads[i], list_to_merge[i]);
+            }
+            ++i;
+        }
+        this->list_of_heads=mergedList;
+    }
+
     void mergeLists(std::vector<BinomialHeapNode*>*list_to_merge){
         if(list_to_merge->size()==0){
             return;
@@ -331,7 +367,14 @@ public:
     }
 
     void unionize(BinomialHeap *bh) {
-        
+        if(bh->isEmpty()){
+            delete bh;
+            return;
+        }
+        this->mergeLists(bh->list_of_heads);
+        this->size+=bh->size;
+        bh->list_of_heads.clear();
+        delete bh;
     }
 };
 
