@@ -19,7 +19,7 @@ public:
 
 template<typename N>
 class BinaryHeap : public Heap<N> {
-public:
+private:
     struct BinaryHeapNode{
         uint32_t key;
         N value;
@@ -31,7 +31,7 @@ public:
             this->position_in_heap=position_in_heap;
         }
     };
-private:
+
     std::vector<BinaryHeapNode*>heap;
 
     void swapNodes(const uint32_t node1, const uint32_t node2){
@@ -80,6 +80,17 @@ private:
     }
 
 public:
+    struct O{
+        private:
+        uint32_t key;
+        BinaryHeapNode *ptr;
+
+        public:
+        const BinaryHeapNode* const getPtr(){
+            return ptr;
+        }
+    };
+
     BinaryHeap()=default;
 
     ~BinaryHeap(){
@@ -147,7 +158,7 @@ public:
 
 template<typename N>
 class BinomialHeap : public Heap<N> {
-public:
+private:
     struct BinomialHeapNode{
         uint32_t key;
         N value;
@@ -166,7 +177,6 @@ public:
         }
     };
 
-private:
     uint32_t size;
     std::vector<BinomialHeapNode*>list_of_heads;
 
@@ -243,6 +253,21 @@ private:
     }
 
 public:
+    struct O{
+        private:
+        const BinomialHeapNode *ptr;
+        public:
+        O(BinomialHeapNode *ptr){
+            this->ptr=ptr;
+        }
+
+        ~O()=default;
+
+        const BinomialHeapNode* const getPtr(){
+            return ptr;
+        }
+    };
+
     BinomialHeap(){
         this->size=0;
         this->list_of_heads=std::vector<BinomialHeapNode*>(BINOMIAL_HEAP_LIST_SIZE, nullptr);
@@ -290,17 +315,19 @@ public:
         return key_to_return;
     }
 
-    const BinomialHeapNode* const insert(const uint32_t key, const N value) {
+    // const BinomialHeapNode* const insert(const uint32_t key, const N value) {
+    const O insert(const uint32_t key, const N value){
         BinomialHeapNode *ptr=new BinomialHeapNode(key, value);
+        O r_ptr;
         ptr->ptr_to_list=&(this->list_of_heads);
-        BinomialHeapNode *r_tpr=ptr;
+        // BinomialHeapNode *r_tpr=ptr;
         while(this->list_of_heads[ptr->degree]){
             ptr=this->mergeNodes(ptr, this->list_of_heads[ptr->degree]);
             this->list_of_heads[ptr->degree-1]=nullptr;
         }
         this->list_of_heads[ptr->degree]=ptr;
         ++this->size;
-        return r_tpr;
+        return r_ptr;
     }
 
     void decreaseKey(BinomialHeapNode *ptr, const N new_value) {
@@ -332,7 +359,7 @@ public:
 
 template<typename N>
 class FibonacciHeap : public Heap<N> {
-public:
+private:
     struct FibonacciHeapNode{
         uint32_t key;
         N value;
@@ -352,7 +379,6 @@ public:
         }
     };
     
-private:
     FibonacciHeapNode *min;
     uint32_t size;
 

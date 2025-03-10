@@ -26,8 +26,8 @@ public:
         return h->getSize();
     }
 
-    void push(const uint32_t node, const N value) {
-        if(h->doesContain(node)){
+    void push(const uint32_t node, const N value, const bool doesContain) {
+        if(doesContain){
             h->decreaseKey(node,value);
         }
         else{
