@@ -33,8 +33,8 @@ public:
         }
         uint32_t fv1=find(v1);
         uint32_t fv2=find(v2);
-        if(fv1<fv2) s[v2]=fv1;
-        else s[v1]=fv2;
+        if(fv1<fv2) s[fv2]=fv1;
+        else s[fv1]=fv2;
     }
 };
 
