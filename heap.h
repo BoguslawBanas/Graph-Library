@@ -15,7 +15,7 @@ public:
     virtual uint32_t getSize() const=0;
     virtual std::pair<uint32_t, N> getMin() const=0;
     virtual uint32_t extractMin()=0;
-    virtual const void* const insert(const uint32_t, const N)=0;
+    virtual void* insert(const uint32_t, const N)=0;
     virtual void decreaseKey(const void*, const N)=0;
 };
 
@@ -122,7 +122,7 @@ public:
         return value_to_return;
     }
 
-    const void* const insert(const uint32_t key, const N value) override{
+    void* insert(const uint32_t key, const N value) override{
         uint32_t index=this->getSize();
         BinaryHeapNode *ptr=new BinaryHeapNode(key, value, index);
         this->heap.push_back(ptr);
@@ -139,7 +139,7 @@ public:
             printErrorMsg(2, "New value is bigger than original one, so operation 'decreaseKey' cannot take place.");
         }
         uint32_t index=ptr->position_in_heap;
-        heap[index]->new_value=new_value;
+        heap[index]->value=new_value;
         this->siftUp(index);
     }
 
@@ -298,7 +298,7 @@ public:
         return key_to_return;
     }
 
-    const void* const insert(const uint32_t key, const N value) override{
+    void* insert(const uint32_t key, const N value) override{
         BinomialHeapNode *ptr=new BinomialHeapNode(key, value);
         ptr->ptr_to_list=&(this->list_of_heads);
         while(this->list_of_heads[ptr->degree]){
@@ -315,7 +315,7 @@ public:
             printErrorMsg(2, "DecreaseKey method in a class that represents binary heap received a pointer to NULL.");
         }
         BinomialHeapNode *ptr=(BinomialHeapNode*)v_ptr;
-        if(new_value>ptr->key_value){
+        if(new_value>ptr->value){
             printErrorMsg(2, "New value is bigger than original one, so operation 'decreaseKey' cannot take place.");
         }
         ptr->value=new_value;
@@ -464,7 +464,7 @@ public:
         return this->size;
     }
 
-    const void* const insert(const uint32_t node, const N value) override{
+    void* insert(const uint32_t node, const N value) override{
         FibonacciHeapNode *ptr=new FibonacciHeapNode(node,value);
         addToList(ptr,this->min);
         if(this->min==nullptr || this->min->value>value) this->min=ptr;
@@ -537,9 +537,10 @@ public:
             }
         }
         --this->size;
+        return return_key;
     }
 
-    void decreaseKey(void *v_ptr, const N new_value) override{
+    void decreaseKey(const void *v_ptr, const N new_value) override{
         if(!v_ptr){
             printErrorMsg(2, "DecreaseKey method in a class that represents binary heap received a pointer to NULL.");
         }

@@ -37,13 +37,13 @@ public:
             h->decreaseKey(v[node], value);
         }
         else{
-            void *ptr=h->insert(node, value);
-            v[node]=ptr;
+            v[node]=h->insert(node, value);
         }
     }
 
     void pop() {
-        h->extractMin();
+        uint32_t index=h->extractMin();
+        v[index]=nullptr;
     }
 };
 
