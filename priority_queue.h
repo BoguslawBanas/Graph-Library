@@ -1,17 +1,23 @@
 #ifndef PQ_H
 #define PQ_H
+#include <vector>
 
 template<typename H, typename N>
 class Priority_Q {
 private:
     H *h=nullptr;
+    uint32_t max_size;
+    std::vector<void*>v;
 public:
-    Priority_Q() {
+    Priority_Q(uint32_t maximum_size) {
         h=new H();
+        this->max_size=maximum_size;
+        v=std::vector<void*>(maximum_size, nullptr);
     }
 
     ~Priority_Q(){
         delete h;
+        v.clear();
     };
 
     std::pair<uint32_t, N> top(){
@@ -26,12 +32,13 @@ public:
         return h->getSize();
     }
 
-    void push(const uint32_t node, const N value, const bool doesContain) {
-        if(doesContain){
-            h->decreaseKey(node,value);
+    void push(const uint32_t node, const N value) {
+        if(v[node]){
+            h->decreaseKey(v[node], value);
         }
         else{
-            h->insert(node, value);
+            void *ptr=h->insert(node, value);
+            v[node]=ptr;
         }
     }
 
