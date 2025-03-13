@@ -439,18 +439,23 @@ N dijkstra(G &g, const uint32_t src, const uint32_t destination) {
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
+    uint32_t top;
+
     distance[src]=0;
-    PQ pq;
+    PQ pq(g.getSize());
     pq.push(src,0);
-    while(!pq.empty() && !is_visited[destination]) {
-        is_visited[pq.top().first]=true;
-        for(auto &i : g.getNeighboursWithWeights(pq.top().first)) {
-            if(!is_visited[i.first] && distance[i.first]>distance[pq.top().first]+i.second) {
-                distance[i.first]=distance[pq.top().first]+i.second;
+    top=src;
+
+    while(!pq.empty() && pq.top().first!=destination) {
+        top=pq.top().first;
+        pq.pop();
+        is_visited[top]=true;
+        for(auto &i : g.getNeighboursWithWeights(top)) {
+            if(!is_visited[i.first] && distance[i.first]>distance[top]+i.second) {
+                distance[i.first]=distance[top]+i.second;
                 pq.push(i.first, distance[i.first]);
             }
         }
-        pq.pop();
     }
     return distance[destination];
 }
@@ -688,8 +693,8 @@ std::vector<std::vector<N>>* floydWarshall(G &g){
     std::vector<std::vector<N>>* result=new std::vector<std::vector<N>>(g.getSize(), std::vector<N>(g.getSize(), max));
 
     for(uint32_t i=0;i<g.getSize();++i) {
-        result->at(i)[i]=0;
         for(auto j : g.getNeighboursWithWeights(i)) result->at(i)[j.first]=j.second;
+        result->at(i)[i]=0;
     }
 
     for(uint32_t i=0;i<g.getSize();++i) {
