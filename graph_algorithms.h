@@ -465,18 +465,23 @@ N dijkstra(G &g, const uint32_t src, const uint32_t destination, bool (*fun)(con
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
+    uint32_t top;
+
     distance[src]=0;
-    PQ pq;
+    PQ pq(g.getSize());
     pq.push(src,0);
-    while(!pq.empty() && !is_visited[destination]) {
-        is_visited[pq.top().first]=true;
-        for(auto &i : g.getNeighboursWithWeights(pq.top().first)) {
-            if(!is_visited[i.first] && distance[i.first]>distance[pq.top().first]+i.second && fun(i.first, distance[pq.top().first]+i.second)) {
-                distance[i.first]=distance[pq.top().first]+i.second;
+    top=src;
+
+    while(!pq.empty() && pq.top().first!=destination) {
+        top=pq.top().first;
+        pq.pop();
+        is_visited[top]=true;
+        for(auto &i : g.getNeighboursWithWeights(top)) {
+            if(!is_visited[i.first] && distance[i.first]>distance[top]+i.second && fun(i.first, distance[top]+i.second)) {
+                distance[i.first]=distance[top]+i.second;
                 pq.push(i.first, distance[i.first]);
             }
         }
-        pq.pop();
     }
     return distance[destination];
 }
@@ -486,20 +491,26 @@ std::vector<uint32_t>* dijkstra_path(G &g, const uint32_t src, const uint32_t de
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
-    std::vector<int32_t>neighbours(g.getSize(), -1);
+    std::vector<int32_t>neighbours(g.getSize(), -2);
+    uint32_t top;
+
     distance[src]=0;
-    PQ pq;
+    PQ pq(g.getSize());
     pq.push(src,0);
+    neighbours[src]=-1;
+    top=src;
+
     while(!pq.empty() && !is_visited[destination]) {
-        is_visited[pq.top().first]=true;
-        for(auto &i : g.getNeighboursWithWeights(pq.top().first)) {
-            if(!is_visited[i.first] && distance[i.first]>distance[pq.top().first]+i.second) {
-                distance[i.first]=distance[pq.top().first]+i.second;
-                neighbours[i.first]=pq.top().first;
+        top=pq.top().first;
+        pq.pop();
+        is_visited[top]=true;
+        for(auto &i : g.getNeighboursWithWeights(top)) {
+            if(!is_visited[i.first] && distance[i.first]>distance[top]+i.second) {
+                distance[i.first]=distance[top]+i.second;
+                neighbours[i.first]=top;
                 pq.push(i.first, distance[i.first]);
             }
         }
-        pq.pop();
     }
     auto *result=new std::vector<uint32_t>();
     int32_t tmp=destination;
@@ -516,20 +527,24 @@ std::vector<uint32_t>* dijkstra_path(G &g, const uint32_t src, const uint32_t de
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
-    std::vector<int32_t>neighbours(g.getSize(), -1);
+    std::vector<int32_t>neighbours(g.getSize(), -2);
+    uint32_t top;
+
+    neighbours[src]=-1;
     distance[src]=0;
     PQ pq;
     pq.push(src,0);
     while(!pq.empty() && !is_visited[destination]) {
-        is_visited[pq.top().first]=true;
-        for(auto &i : g.getNeighboursWithWeights(pq.top().first)) {
-            if(!is_visited[i.first] && distance[i.first]>distance[pq.top().first]+i.second && fun(i.first, distance[pq.top().first]+i.second)) {
-                distance[i.first]=distance[pq.top().first]+i.second;
-                neighbours[i.first]=pq.top().first;
+        top=pq.top().first;
+        pq.pop();
+        is_visited[top]=true;
+        for(auto &i : g.getNeighboursWithWeights(top)) {
+            if(!is_visited[i.first] && distance[i.first]>distance[top]+i.second && fun(i.first, distance[top]+i.second)) {
+                distance[i.first]=distance[top]+i.second;
+                neighbours[i.first]=top;
                 pq.push(i.first, distance[i.first]);
             }
         }
-        pq.pop();
     }
     auto *result=new std::vector<uint32_t>();
     int32_t tmp=destination;
@@ -537,13 +552,7 @@ std::vector<uint32_t>* dijkstra_path(G &g, const uint32_t src, const uint32_t de
         result->push_back(tmp);
         tmp=neighbours[tmp];
     }while(tmp!=-1);
-    uint32_t i=0;
-    uint32_t j=result->size()-1;
-    while(i<j) {
-        std::swap(result->at(i), result->at(j));
-        ++i;
-        --j;
-    }
+    std::reverse(result->begin(), result->end());
     return result;
 }
 
@@ -555,27 +564,31 @@ std::unordered_map<uint32_t, N>* dijkstra(G &g, const uint32_t src, const std::v
     std::vector<bool>is_visited(g.getSize(), false);
     auto *result=new std::unordered_map<uint32_t, N>();
     std::vector<bool>is_important(g.getSize(), false);
+    uint32_t top;
     for(auto &i : destinations) {
         is_important[i]=true;
         result->insert({i, max});
     }
+
     distance[src]=0;
     uint32_t counter=0;
-    PQ pq;
+    PQ pq(g.getSize());
     pq.push(src,0);
+
     while(!pq.empty() && counter!=destinations.size()) {
-        is_visited[pq.top().first]=true;
-        if(is_important[pq.top().first]) {
-            result->at(pq.top().first)=pq.top().second;
+        top=pq.top().first;
+        pq.pop();
+        is_visited[top]=true;
+        if(is_important[top]) {
+            result->at(top)=distance[top];
             ++counter;
         }
-        for(auto &i : g.getNeighboursWithWeights(pq.top().first)) {
-            if(!is_visited[i.first] && distance[i.first]>distance[pq.top().first]+i.second) {
-                distance[i.first]=distance[pq.top().first]+i.second;
+        for(auto &i : g.getNeighboursWithWeights(top)) {
+            if(!is_visited[i.first] && distance[i.first]>distance[top]+i.second) {
+                distance[i.first]=distance[top]+i.second;
                 pq.push(i.first, distance[i.first]);
             }
         }
-        pq.pop();
     }
     return result;
 }
@@ -587,27 +600,31 @@ std::unordered_map<uint32_t, N>* dijkstra(G &g, const uint32_t src, const std::v
     std::vector<bool>is_visited(g.getSize(), false);
     auto *result=new std::unordered_map<uint32_t, N>();
     std::vector<bool>is_important(g.getSize(), false);
+    uint32_t top;
+
     for(auto &i : destinations) {
         is_important[i]=true;
         result->insert({i, max});
     }
     distance[src]=0;
     uint32_t counter=0;
-    PQ pq;
+    PQ pq(g.getSize());
     pq.push(src,0);
+
     while(!pq.empty() && counter!=destinations.size()) {
-        is_visited[pq.top().first]=true;
-        if(is_important[pq.top().first]) {
-            result->at(pq.top().first)=pq.top().second;
+        top=pq.top().first;
+        pq.pop();
+        is_visited[top]=true;
+        if(is_important[top]) {
+            result->at(top)=distance[top];
             ++counter;
         }
-        for(auto &i : g.getNeighboursWithWeights(pq.top().first)) {
-            if(!is_visited[i.first] && distance[i.first]>distance[pq.top().first]+i.second && fun(i.first, result->at(pq.top().first)+i.second)) {
-                distance[i.first]=distance[pq.top().first]+i.second;
+        for(auto &i : g.getNeighboursWithWeights(top)) {
+            if(!is_visited[i.first] && distance[i.first]>distance[top]+i.second && fun(i.first, result->at(top)+i.second)) {
+                distance[i.first]=distance[top]+i.second;
                 pq.push(i.first, distance[i.first]);
             }
         }
-        pq.pop();
     }
     return result;
 }
@@ -617,18 +634,22 @@ std::vector<N>* dijkstra(G &g, const uint32_t src) {
     N max=g.getMax();
     auto *result=new std::vector<N>(g.getSize(), max);
     std::vector<bool>is_visited(g.getSize(), false);
-    PQ pq;
+    uint32_t top;
+
+    PQ pq(g.getSize());
     pq.push(src,0);
     result->at(src)=0;
+
     while(!pq.empty()) {
-        is_visited[pq.top().first]=true;
-        for(auto &i : g.getNeighboursWithWeights(pq.top().first)) {
-            if(!is_visited[i.first] && result->at(i.first)>result->at(pq.top().first)+i.second) {
-                result->at(i.first)=result->at(pq.top().first)+i.second;
+        top=pq.top().first;
+        pq.pop();
+        is_visited[top]=true;
+        for(auto &i : g.getNeighboursWithWeights(top)) {
+            if(!is_visited[i.first] && result->at(i.first)>result->at(top)+i.second) {
+                result->at(i.first)=result->at(top)+i.second;
                 pq.push(i.first, result->at(i.first));
             }
         }
-        pq.pop();
     }
     return result;
 }
@@ -638,18 +659,22 @@ std::vector<N>* dijkstra(G &g, const uint32_t src, bool (*fun)(uint32_t, N)) {
     N max=g.getMax();
     auto *result=new std::vector<N>(g.getSize(), max);
     std::vector<bool>is_visited(g.getSize(), false);
-    PQ pq;
+    uint32_t top;
+
+    PQ pq(g.getSize());
     pq.push(src,0);
     result->at(src)=0;
+
     while(!pq.empty()) {
-        is_visited[pq.top().first]=true;
-        for(auto &i : g.getNeighboursWithWeights(pq.top().first)) {
-            if(!is_visited[i.first] && result->at(i.first)>result->at(pq.top().first)+i.second && fun(i.first, result->at(pq.top().first)+i.second)) {
-                result->at(i.first)=result->at(pq.top().first)+i.second;
+        top=pq.top().first;
+        pq.pop();
+        is_visited[top]=true;
+        for(auto &i : g.getNeighboursWithWeights(top)) {
+            if(!is_visited[i.first] && result->at(i.first)>result->at(top)+i.second && fun(i.first, result->at(top)+i.second)) {
+                result->at(i.first)=result->at(top)+i.second;
                 pq.push(i.first, result->at(i.first));
             }
         }
-        pq.pop();
     }
     return result;
 }
@@ -720,17 +745,20 @@ N A_star(G &g, const uint32_t src, const uint32_t destination, N (*heuristic)(co
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
+    uint32_t top;
+
     distance[src]=0;
-    PQ pq;
+    PQ pq(g,getSize());
     pq.push(src, heuristic(src));
+
     while(!pq.empty() && !is_visited[destination]) {
-        auto front=pq.top();
+        top=pq.top().first;
         pq.pop();
-        is_visited[front.first]=true;
-        for(auto &i : g.getNeighboursWithWeights(front.first)) {
-            if(!is_visited[i.first] && distance[i.first]>distance[front.first]+i.second){
-                pq.push(i.first, distance[front.first]+i.second+heuristic(i.first));
-                distance[i.first]=distance[front.first]+i.second;
+        is_visited[top]=true;
+        for(auto &i : g.getNeighboursWithWeights(top)) {
+            if(!is_visited[i.first] && distance[i.first]>distance[top]+i.second){
+                pq.push(i.first, distance[top]+i.second+heuristic(i.first)); //is_this_okay? shouldn't be: pq.push(i.first, distance[top]+heuristic(i.first))
+                distance[i.first]=distance[top]+i.second;
             }
         }
     }
@@ -741,21 +769,25 @@ template<typename G, typename N, typename PQ>
 std::vector<uint32_t>* A_star_path(G &g, const uint32_t src, const uint32_t destination, N (*heuristic)(const uint32_t)) {
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
-    std::vector<int32_t>prev_vertex(g.getSize(), -1);
+    std::vector<int32_t>prev_vertex(g.getSize(), -2);
     std::vector<N>distance(g.getSize(), max);
     std::vector<uint32_t>*path=new std::vector<uint32_t>();
+    uint32_t top;
+
     distance[src]=0;
-    PQ pq;
+    prev_vertex[src]=-1;
+    PQ pq(g.getSize());
     pq.push(src,0);
+
     while(!pq.empty() && !is_visited[destination]){
-        auto front=pq.top();
+        top=pq.top().first;
         pq.pop();
-        is_visited[front.first]=true;
-        for(auto &i : g.getNeighboursWithWeights(front.first)) {
-            if(!is_visited[i.first] && distance[i.first]>distance[front.first]+i.second){
-                pq.push(i.first, distance[front.first]+i.second+heuristic(i.first));
-                distance[i.first]=distance[front.first]+i.second;
-                prev_vertex[i.first]=front.first;
+        is_visited[top]=true;
+        for(auto &i : g.getNeighboursWithWeights(top)) {
+            if(!is_visited[i.first] && distance[i.first]>distance[top]+i.second){
+                pq.push(i.first, distance[top]+i.second+heuristic(i.first));
+                distance[i.first]=distance[top]+i.second;
+                prev_vertex[i.first]=top;
             }
         }
     }
