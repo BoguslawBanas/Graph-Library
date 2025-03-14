@@ -106,6 +106,9 @@ public:
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method areVertexesConnected(const uint32_t, const uint32_t) in a class ListGraphDirected is out of bounds.");
         }
+        if(first==second){
+            return true;
+        }
         for(uint32_t v : adjacencyList[first]){
             if(v==second) return true;
         }
@@ -233,6 +236,9 @@ public:
         }
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method areVertexesConnected(const uint32_t, const uint32_t) in a class ListGraphWeightedAndDirected<N> is out of bounds.");
+        }
+        if(first==second){
+            return true;
         }
         for(auto i : adjacencyList[first]){
             if(i.first==second) return true;
@@ -397,6 +403,9 @@ public:
         }
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method areVertexesConnected(const uint32_t, const uint32_t) in a class ListGraphWeighted<N> is out of bounds.");
+        }
+        if(first==second){
+            return true;
         }
         if(adjacencyList[first].size()>adjacencyList[second].size()) std::swap(first,second);
         for(auto i : adjacencyList[first]) {
@@ -599,6 +608,9 @@ public:
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method areVertexesConnected(uint32_t, uint32_t) in a class ListGraph is out of bounds.");
         }
+        if(first==second){
+            return true;
+        }
         if(adjacencyList[first].size()>adjacencyList[second].size()) std::swap(first, second);
         for(uint32_t i : adjacencyList[first]) {
             if(i==second) return true;
@@ -728,6 +740,9 @@ public:
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method areVertexesConnected(uint32_t, uint32_t) in a class MatrixGraph is out of bounds.");
         }
+        if(first==second){
+            return true;
+        }
         if(first<second) std::swap(first, second);
         return adjacencyMatrix[first][second];
     }
@@ -843,6 +858,9 @@ public:
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method areVertexesConnected(const uint32_t, const uint32_t) in a class MatrixGraphDirected is out of bounds.");
         }
+        if(first==second){
+            return true;
+        }
         return adjacencyMatrix[first][second];
     }
 
@@ -955,6 +973,9 @@ public:
         }
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method areVertexesConnected(const uint32_t, const uint32_t) in a class MatrixGraphWeightedAndDirected<N> is out of bounds.");
+        }
+        if(first==second){
+            return true;
         }
         return adjacencyMatrix[first][second]!=this->max;
     }
@@ -1078,6 +1099,9 @@ public:
         }
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method areVertexesConnected(uint32_t, uint32_t) in a class MatrixGraphWeighted<N> is out of bounds.");
+        }
+        if(first==second){
+            return true;
         }
         if(first<second) std::swap(first, second);
         return adjacencyMatrix[first][second];
