@@ -1,18 +1,19 @@
 #ifndef PQ_H
 #define PQ_H
 #include <vector>
+#include "heap_node.h"
 
 template<typename H, typename N>
 class Priority_Q {
 private:
     H *h=nullptr;
     uint32_t max_size;
-    std::vector<void*>v;
+    std::vector<HeapNode>v;
 public:
     Priority_Q(uint32_t maximum_size) {
         h=new H();
         this->max_size=maximum_size;
-        v=std::vector<void*>(maximum_size, nullptr);
+        v=std::vector<HeapNode>(maximum_size, HeapNode());
     }
 
     ~Priority_Q(){
@@ -33,8 +34,8 @@ public:
     }
 
     void push(const uint32_t node, const N value) {
-        if(v[node]){
-            h->decreaseKey(v[node], value);
+        if(v[node].getPtr()){
+            h->decreaseKey(&v[node], value);
         }
         else{
             v[node]=h->insert(node, value);
@@ -43,7 +44,7 @@ public:
 
     void pop() {
         uint32_t index=h->extractMin();
-        v[index]=nullptr;
+        v[index]=HeapNode(nullptr, index);
     }
 };
 
