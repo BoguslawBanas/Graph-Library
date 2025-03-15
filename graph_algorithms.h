@@ -387,25 +387,26 @@ std::vector<std::pair<uint32_t, uint32_t>>* prim(G &g, const uint32_t src) {
     std::vector<int32_t>parent(g.getSize(), -1);
     std::vector<N>keys(g.getSize(), g.getMax());
     std::vector<bool>mstSet(g.getSize(), false);
+    uint32_t top;
 
     keys[src]=-1;
-    PQ pq;
+    PQ pq(g.getSize());
     pq.push(src, 0);
-    uint32_t counter=0;
     bool is_not_first=false;
-    while(!pq.empty() && counter!=g.getSize()-1){
-        uint32_t v=pq.top().first;
+
+    while(!pq.empty()){
+        top=pq.top().first;
         pq.pop();
-        mstSet[v]=true;
-        for(auto &i : g.getNeighboursWithWeights(v)){
+        mstSet[top]=true;
+        for(auto &i : g.getNeighboursWithWeights(top)){
             if(!mstSet[i.first] && i.second<keys[i.first]){
                 keys[i.first]=i.second;
                 pq.push(i.first, i.second);
-                parent[i.first]=v;
+                parent[i.first]=top;
             }
         }
         if(is_not_first){
-            result->push_back(std::pair<uint32_t, uint32_t>(parent[v], v));
+            result->push_back(std::pair<uint32_t, uint32_t>(parent[top], top));
         }
         else is_not_first=true;
     }
@@ -748,7 +749,7 @@ N A_star(G &g, const uint32_t src, const uint32_t destination, N (*heuristic)(co
     uint32_t top;
 
     distance[src]=0;
-    PQ pq(g,getSize());
+    PQ pq(g.getSize());
     pq.push(src, heuristic(src));
 
     while(!pq.empty() && !is_visited[destination]) {
