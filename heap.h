@@ -38,9 +38,9 @@ private:
     std::vector<BinaryHeapNode*>heap;
 
     void swapNodes(const uint32_t node1, const uint32_t node2){
-        std::swap(heap[node1], heap[node2]);
         heap[node1]->position_in_heap=node2;
         heap[node2]->position_in_heap=node1;
+        std::swap(heap[node1], heap[node2]);
     }
 
     void siftUp(uint32_t index){
