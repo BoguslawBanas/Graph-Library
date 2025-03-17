@@ -758,7 +758,7 @@ N A_star(G &g, const uint32_t src, const uint32_t destination, N (*heuristic)(co
         is_visited[top]=true;
         for(auto &i : g.getNeighboursWithWeights(top)) {
             if(!is_visited[i.first] && distance[i.first]>distance[top]+i.second){
-                pq.push(i.first, distance[top]+i.second+heuristic(i.first)); //is_this_okay? shouldn't be: pq.push(i.first, distance[top]+heuristic(i.first))
+                pq.push(i.first, distance[top]+i.second+heuristic(i.first));
                 distance[i.first]=distance[top]+i.second;
             }
         }
