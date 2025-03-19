@@ -136,8 +136,8 @@ public:
             printErrorMsg(2, "DecreaseKey method in a class that represents binary heap received a pointer to NULL.");
         }
         BinaryHeapNode *ptr=(BinaryHeapNode*)heap_node->getPtr();
-        if(ptr->value<new_value){
-            printErrorMsg(2, "New value is bigger than original one, so operation 'decreaseKey' cannot take place.");
+        if(ptr->value<=new_value){
+            return;
         }
         uint32_t index=ptr->position_in_heap;
         heap[index]->value=new_value;
@@ -317,8 +317,8 @@ public:
             printErrorMsg(2, "DecreaseKey method in a class that represents binary heap received a pointer to NULL.");
         }
         BinomialHeapNode *ptr=(BinomialHeapNode*)heap_node->getPtr();
-        if(ptr->value<new_value){
-            printErrorMsg(2, "New value is bigger than original one, so operation 'decreaseKey' cannot take place.");
+        if(ptr->value<=new_value){
+            return;
         }
         ptr->value=new_value;
         BinomialHeapNode *ptr_p=ptr->parent;
@@ -547,8 +547,8 @@ public:
             printErrorMsg(2, "DecreaseKey method in a class that represents binary heap received a pointer to NULL.");
         }
         FibonacciHeapNode *ptr=(FibonacciHeapNode*)heap_node->getPtr();
-        if(new_value>ptr->value){
-            printErrorMsg(2, "New value is bigger than original one, so operation 'decreaseKey' cannot take place.");
+        if(new_value>=ptr->value){
+            return;
         }
         ptr->value=new_value;
         if(ptr->parent!=nullptr && new_value<ptr->parent->value){
