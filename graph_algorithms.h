@@ -746,14 +746,11 @@ N A_star(G &g, const uint32_t src, const uint32_t destination, N (*heuristic)(co
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
-    std::vector<N>heuristic_distance(g.getSize(), max);
     uint32_t top;
-    N h_calc;
 
     distance[src]=0;
-    heuristic_distance[src]=heuristic(src);
     PQ pq(g.getSize());
-    pq.push(src, heuristic_distance[src]);
+    pq.push(src, heuristic(src));
 
     while(!pq.empty() && !is_visited[destination]) {
         top=pq.top().first;
@@ -761,11 +758,7 @@ N A_star(G &g, const uint32_t src, const uint32_t destination, N (*heuristic)(co
         is_visited[top]=true;
         for(auto &i : g.getNeighboursWithWeights(top)) {
             if(!is_visited[i.first] && distance[i.first]>distance[top]+i.second){
-                h_calc=distance[top]+i.second+heuristic(i.first);
-                if(heuristic_distance[i.first]>h_calc){
-                    pq.push(i.first, h_calc);
-                    heuristic_distance[i.first]=h_calc;
-                }
+                pq.push(i.first, distance[top]+i.second+heuristic(i.first));
                 distance[i.first]=distance[top]+i.second;
             }
         }
@@ -779,16 +772,13 @@ std::vector<uint32_t>* A_star_path(G &g, const uint32_t src, const uint32_t dest
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<int32_t>prev_vertex(g.getSize(), -2);
     std::vector<N>distance(g.getSize(), max);
-    std::vector<N>heuristic_distance(g.getSize(), max);
     std::vector<uint32_t>*path=new std::vector<uint32_t>();
     uint32_t top;
-    N h_calc;
 
     distance[src]=0;
-    heuristic_distance[src]=heuristic(src);
     prev_vertex[src]=-1;
     PQ pq(g.getSize());
-    pq.push(src, heuristic_distance[src]);
+    pq.push(src, heuristic(src));
 
     while(!pq.empty() && !is_visited[destination]){
         top=pq.top().first;
@@ -796,11 +786,7 @@ std::vector<uint32_t>* A_star_path(G &g, const uint32_t src, const uint32_t dest
         is_visited[top]=true;
         for(auto &i : g.getNeighboursWithWeights(top)) {
             if(!is_visited[i.first] && distance[i.first]>distance[top]+i.second){
-                h_calc=distance[top]+i.second+heuristic(i.first);
-                if(heuristic_distance[i.first]>h_calc){
-                    pq.push(i.first, h_calc);
-                    heuristic_distance[i.first]=h_calc;
-                }
+                pq.push(i.first, distance[top]+i.second+heuristic(i.first));
                 distance[i.first]=distance[top]+i.second;
                 prev_vertex[i.first]=top;
             }
