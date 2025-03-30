@@ -63,24 +63,6 @@ public:
         this->is_weighted=false;
     }
 
-    ListGraphDirected(const char *path){
-        std::ifstream fileStream(path);
-        if(!fileStream) printErrorMsg(2, "Error with opening std::ifstream in a constructor of ListGraphDirected class (bad file path).");
-        uint32_t tmp,tmp2,size;
-        fileStream>>size;
-        for(uint32_t i=0;i<size;++i) adjacencyList.push_back(std::vector<uint32_t>());
-        while(fileStream>>tmp) {
-            fileStream>>tmp2;
-            if(tmp>=size || tmp2>=size){
-                printErrorMsg(2, "Index of a vertex is bigger than size of the graph in a constructor of ListGraphDirected.");
-            }
-            adjacencyList[tmp].push_back(tmp2);
-        }
-        fileStream.close();
-        this->is_directed=true;
-        this->is_weighted=false;
-    }
-
     ~ListGraphDirected()=default;
 
     void transpose(){
@@ -105,9 +87,6 @@ public:
         }
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method areVertexesConnected(const uint32_t, const uint32_t) in a class ListGraphDirected is out of bounds.");
-        }
-        if(first==second){
-            return true;
         }
         for(uint32_t v : adjacencyList[first]){
             if(v==second) return true;
@@ -192,26 +171,6 @@ public:
         this->max=max;
     }
 
-    ListGraphWeightedAndDirected(const char *path){
-        std::ifstream fileStream(path);
-        if(!fileStream) printErrorMsg(2, "Error with opening std::ifstream in a constructor of ListGraphWeightedAndDirected<N> class (bad file path).");
-        uint32_t tmp,tmp2,size;
-        N weight;
-        fileStream>>size>>weight;
-        for(uint32_t i=0;i<size;++i) adjacencyList.push_back(std::vector<std::pair<uint32_t,N>>());
-        this->max=weight;
-        while(fileStream>>tmp) {
-            fileStream>>tmp2>>weight;
-            if(tmp>=size || tmp2>=size){
-                printErrorMsg(2, "Index of a vertex is bigger than size of the graph in a constructor of ListGraphWeightedAndDirected<N>.");
-            }
-            adjacencyList[tmp].push_back(std::pair<uint32_t, N>(tmp2, weight));
-        }
-        fileStream.close();
-        this->is_directed=true;
-        this->is_weighted=true;
-    }
-
     ~ListGraphWeightedAndDirected()=default;
 
     void transpose(){
@@ -236,9 +195,6 @@ public:
         }
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method areVertexesConnected(const uint32_t, const uint32_t) in a class ListGraphWeightedAndDirected<N> is out of bounds.");
-        }
-        if(first==second){
-            return true;
         }
         for(auto i : adjacencyList[first]){
             if(i.first==second) return true;
@@ -369,27 +325,6 @@ public:
         this->max=max;
     }
 
-    ListGraphWeighted(const char *path) {
-        std::ifstream fileStream(path);
-        if(!fileStream) printErrorMsg(2, "Error with opening std::ifstream in a constructor of ListGraphWeighted<N> class (bad file path).");
-        uint32_t tmp,tmp2,size;
-        N weight;
-        fileStream>>size>>weight;
-        for(uint32_t i=0;i<size;++i) adjacencyList.push_back(std::vector<std::pair<uint32_t,N>>());
-        this->max=weight;
-        while(fileStream>>tmp) {
-            fileStream>>tmp2>>weight;
-            if(tmp>=size || tmp2>=size){
-                printErrorMsg(2, "Index of a vertex is bigger than size of the graph in a constructor of ListGraphWeighted<N>.");
-            }
-            adjacencyList[tmp].push_back(std::pair<uint32_t, N>(tmp2, weight));
-            if(tmp!=tmp2) adjacencyList[tmp2].push_back(std::pair<uint32_t, N>(tmp,weight));
-        }
-        fileStream.close();
-        this->is_directed=false;
-        this->is_weighted=true;
-    }
-
     ~ListGraphWeighted()=default;
 
 
@@ -403,9 +338,6 @@ public:
         }
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method areVertexesConnected(const uint32_t, const uint32_t) in a class ListGraphWeighted<N> is out of bounds.");
-        }
-        if(first==second){
-            return true;
         }
         if(adjacencyList[first].size()>adjacencyList[second].size()) std::swap(first,second);
         for(auto i : adjacencyList[first]) {
@@ -576,25 +508,6 @@ public:
         this->is_weighted=false;
     }
 
-    ListGraph(const char *path){
-        std::ifstream fileStream(path);
-        if(!fileStream) printErrorMsg(2, "Error with opening std::ifstream in a constructor of ListGraph class (bad file path).");
-        uint32_t tmp,tmp2,size;
-        fileStream>>size;
-        for(uint32_t i=0;i<size;++i) adjacencyList.push_back(std::vector<uint32_t>());
-        while(fileStream>>tmp) {
-            fileStream>>tmp2;
-            if(tmp>=size || tmp2>=size){
-                printErrorMsg(2, "Index of a vertex is bigger than size of the graph in a constructor of ListGraph.");
-            }
-            adjacencyList[tmp].push_back(tmp2);
-            adjacencyList[tmp2].push_back(tmp);
-        }
-        fileStream.close();
-        this->is_directed=false;
-        this->is_weighted=false;
-    }
-
     ~ListGraph()=default;
 
     uint32_t getSize() const override{
@@ -607,9 +520,6 @@ public:
         }
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method areVertexesConnected(uint32_t, uint32_t) in a class ListGraph is out of bounds.");
-        }
-        if(first==second){
-            return true;
         }
         if(adjacencyList[first].size()>adjacencyList[second].size()) std::swap(first, second);
         for(uint32_t i : adjacencyList[first]) {
@@ -708,25 +618,6 @@ public:
         this->is_weighted=false;
     }
 
-    MatrixGraph(const char *path){
-        std::ifstream fileStream(path);
-        if(!fileStream) printErrorMsg(2, "Error with opening std::ifstream in a constructor of MatrixGraph class (bad file path).");
-        uint32_t tmp,tmp2,size;
-        fileStream>>size;
-        for(uint32_t i=0;i<size;++i) adjacencyMatrix.push_back(std::vector<bool>(i+1));
-        while(fileStream>>tmp) {
-            fileStream>>tmp2;
-            if(tmp>=size || tmp2>=size){
-                printErrorMsg(2, "Index of a vertex is bigger than size of the graph in a constructor of MatrixGraph.");
-            }
-            if(tmp<tmp2) std::swap(tmp, tmp2);
-            adjacencyMatrix[tmp][tmp2]=true;
-        }
-        fileStream.close();
-        this->is_directed=false;
-        this->is_weighted=false;
-    }
-
     ~MatrixGraph()=default;
 
     uint32_t getSize() const override{
@@ -739,9 +630,6 @@ public:
         }
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method areVertexesConnected(uint32_t, uint32_t) in a class MatrixGraph is out of bounds.");
-        }
-        if(first==second){
-            return true;
         }
         if(first<second) std::swap(first, second);
         return adjacencyMatrix[first][second];
@@ -811,24 +699,6 @@ public:
         this->is_directed=true;
     }
 
-    MatrixGraphDirected(const char *path){
-        std::ifstream fileStream(path);
-        if(!fileStream) printErrorMsg(2, "Error with opening std::ifstream in a constructor of MatrixGraphDirected class (bad file path).");
-        uint32_t tmp,tmp2,size;
-        fileStream>>size;
-        for(uint32_t i=0;i<size;++i) adjacencyMatrix.push_back(std::vector<bool>(size, false));
-        while(fileStream>>tmp) {
-            fileStream>>tmp2;
-            if(tmp>=size || tmp2>=size){
-                printErrorMsg(2, "Index of a vertex is bigger than size of the graph in a constructor of MatrixGraphDirected.");
-            }
-            adjacencyMatrix[tmp][tmp2]=true;
-        }
-        fileStream.close();
-        this->is_weighted=false;
-        this->is_directed=true;
-    }
-
     ~MatrixGraphDirected()=default;
 
     void transpose(){
@@ -857,9 +727,6 @@ public:
         }
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method areVertexesConnected(const uint32_t, const uint32_t) in a class MatrixGraphDirected is out of bounds.");
-        }
-        if(first==second){
-            return true;
         }
         return adjacencyMatrix[first][second];
     }
@@ -925,26 +792,6 @@ public:
         this->is_directed=true;
     }
 
-    MatrixGraphWeightedAndDirected(const char *path){
-        std::ifstream fileStream(path);
-        if(!fileStream) printErrorMsg(2, "Error with opening std::ifstream in a constructor of MatrixGraphWeightedAndDirected<N> class (bad file path).");
-        uint32_t tmp,tmp2,size;
-        N weight;
-        fileStream>>size>>weight;
-        this->max=weight;
-        for(uint32_t i=0;i<size;++i) adjacencyMatrix.push_back(std::vector<N>(size,weight));
-        while(fileStream>>tmp) {
-            fileStream>>tmp2>>weight;
-            if(tmp>=size || tmp2>=size){
-                printErrorMsg(2, "Index of a vertex is bigger than size of the graph in a constructor of MatrixGraphWeightedAndDirected<N>.");
-            }
-            adjacencyMatrix[tmp][tmp2]=weight;
-        }
-        fileStream.close();
-        this->is_weighted=true;
-        this->is_directed=true;
-    }
-
     ~MatrixGraphWeightedAndDirected() = default;
 
     void transpose(){
@@ -973,9 +820,6 @@ public:
         }
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method areVertexesConnected(const uint32_t, const uint32_t) in a class MatrixGraphWeightedAndDirected<N> is out of bounds.");
-        }
-        if(first==second){
-            return true;
         }
         return adjacencyMatrix[first][second]!=this->max;
     }
@@ -1066,27 +910,6 @@ public:
         this->is_directed=false;
     }
 
-    MatrixGraphWeighted(const char *path){
-        std::ifstream fileStream(path);
-        if(!fileStream) printErrorMsg(2, "Error with opening std::ifstream in a constructor of MatrixGraphWeighted<N> class (bad file path).");
-        uint32_t tmp,tmp2,size;
-        N weight;
-        fileStream>>size>>weight;
-        this->max=weight;
-        for(uint32_t i=0;i<size;++i) adjacencyMatrix.push_back(std::vector<N>(i+1, weight));
-        while(fileStream>>tmp) {
-            fileStream>>tmp2>>weight;
-            if(tmp>=size || tmp2>=size){
-                printErrorMsg(2, "Index of a vertex is bigger than size of the graph in a constructor of MatrixGraphWeighted<N>.");
-            }
-            if(tmp<tmp2) std::swap(tmp, tmp2);
-            adjacencyMatrix[tmp][tmp2]=weight;
-        }
-        fileStream.close();
-        this->is_weighted=true;
-        this->is_directed=false;
-    }
-
     ~MatrixGraphWeighted()=default;
 
     uint32_t getSize() const override{
@@ -1099,9 +922,6 @@ public:
         }
         if(this->isIndexOutOfBounds(second)){
             printErrorMsg(2, "The second argument of a method areVertexesConnected(uint32_t, uint32_t) in a class MatrixGraphWeighted<N> is out of bounds.");
-        }
-        if(first==second){
-            return true;
         }
         if(first<second) std::swap(first, second);
         return adjacencyMatrix[first][second];

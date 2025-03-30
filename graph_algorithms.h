@@ -419,20 +419,26 @@ std::vector<std::pair<uint32_t, uint32_t>>* prim(G &g, const uint32_t src) {
 
 template<typename G, typename N, typename DS>
 std::vector<std::pair<uint32_t, uint32_t>>* kruskal(G &g){
-    if(!isWeaklyConnected<G>(g)) return NULL;
     auto list=g.getListOfEdges();
     std::sort(list.begin(), list.end(), [](const auto &p1, const auto &p2){
         return p1.second<p2.second;
     });
     DS ds(g.getSize());
     auto result=new std::vector<std::pair<uint32_t,uint32_t>>();
+    uint32_t i1,i2;
     for(auto &i : list){
-        if(ds.find(i.first.first)!=ds.find(i.first.second)){
-            ds.unionize(i.first.first, i.first.second);
+        i1=ds.find(i.first.first);
+        i2-ds.find(i.first.second);
+        if(i1!=i2){
+            ds.unionize_f(i1,i2);
             result->push_back(i.first);
+            if(result->size()==g.getSize()-1){
+                return result;
+            }
         }
     }
-    return result;
+    delete result;
+    return NULL;
 }
 
 template<typename G, typename N, typename PQ>

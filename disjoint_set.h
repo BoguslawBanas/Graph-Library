@@ -36,6 +36,11 @@ public:
         if(fv1<fv2) s[fv2]=fv1;
         else s[fv1]=fv2;
     }
+
+    void unionize_f(const uint32_t fv1, const uint32_t fv2){
+        if(fv1<fv2) s[fv2]=fv1;
+        else s[fv1]=fv2;
+    }
 };
 
 #endif
