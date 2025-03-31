@@ -8,7 +8,7 @@
 #include <algorithm>
 
 template<typename G>
-bool isWeaklyConnected(G &g){
+bool isWeaklyConnected(const G &g){
     if(g.getSize()==0) return false;
     if(!g.isDirected()){
         return isStronglyConnected(g);
@@ -86,7 +86,7 @@ bool isStronglyConnected(G &g){
 }
 
 template<typename G>
-bool isBipartite(G &g){
+bool isBipartite(const G &g){
     if(g.getSize()==0) return false;
     for(uint32_t i=0;i<g.getSize();++i) {
         if(g.areVertexesConnected(i,i)) return false;
@@ -114,7 +114,7 @@ bool isBipartite(G &g){
 }
 
 template<typename G>
-int32_t bfs(G &g, const uint32_t src, const uint32_t destination){
+int32_t bfs(const G &g, const uint32_t src, const uint32_t destination){
     if(src==destination) return 0;
     std::queue<uint32_t>q;
     std::vector<int32_t>tmp(g.getSize(), -1);
@@ -134,7 +134,7 @@ int32_t bfs(G &g, const uint32_t src, const uint32_t destination){
 }
 
 template<typename G>
-std::unordered_map<uint32_t, int32_t>* bfs(G& g, const uint32_t src, const std::vector<uint32_t>& destinations){
+std::unordered_map<uint32_t, int32_t>* bfs(const G& g, const uint32_t src, const std::vector<uint32_t>& destinations){
     if(destinations.empty()){
         return new std::unordered_map<uint32_t, int32_t>();
     }
@@ -170,7 +170,7 @@ std::unordered_map<uint32_t, int32_t>* bfs(G& g, const uint32_t src, const std::
 }
 
 template<typename G>
-std::vector<int32_t>* bfs(G &g, const uint32_t src){
+std::vector<int32_t>* bfs(const G &g, const uint32_t src){
     auto result=new std::vector<int32_t>(g.getSize(), -1);
     std::queue<uint32_t>q;
     q.push(src);
@@ -188,7 +188,7 @@ std::vector<int32_t>* bfs(G &g, const uint32_t src){
 }
 
 template<typename G, typename F>
-int32_t bfs(G &g, const uint32_t src, const uint32_t destination, const F &fun){
+int32_t bfs_with_f(const G &g, const uint32_t src, const uint32_t destination, const F &fun){
     if(src==destination) return 0;
     std::queue<int32_t>q;
     std::vector<int32_t>tmp(g.getSize(), -1);
@@ -208,7 +208,7 @@ int32_t bfs(G &g, const uint32_t src, const uint32_t destination, const F &fun){
 }
 
 template<typename G, typename F>
-std::unordered_map<uint32_t, int32_t>* bfs(G& g, const uint32_t src, const std::vector<uint32_t>& destinations, const F &fun){
+std::unordered_map<uint32_t, int32_t>* bfs_with_f(const G& g, const uint32_t src, const std::vector<uint32_t>& destinations, const F &fun){
     if(destinations.empty()){
         return new std::unordered_map<uint32_t, int32_t>();
     }
@@ -244,7 +244,7 @@ std::unordered_map<uint32_t, int32_t>* bfs(G& g, const uint32_t src, const std::
 }
 
 template<typename G, typename F>
-std::vector<int32_t>* bfs(G &g, const uint32_t src, const F &fun){
+std::vector<int32_t>* bfs_with_f(const G &g, const uint32_t src, const F &fun){
     auto result=new std::vector<int32_t>(g.getSize(), -1);
     std::queue<uint32_t>q;
     q.push(src);
@@ -262,7 +262,7 @@ std::vector<int32_t>* bfs(G &g, const uint32_t src, const F &fun){
 }
 
 template<typename G, typename F>
-void bfs(G &g, const uint32_t src, F &f){
+void bfs_functor(const G &g, const uint32_t src, F &f){
     std::vector<bool>is_visited(false, g.getSize());
     std::queue<uint32_t>q;
     q.push(src);
@@ -280,7 +280,7 @@ void bfs(G &g, const uint32_t src, F &f){
 }
 
 template<typename G>
-std::vector<int32_t>* bfs_path(G &g, const uint32_t src, const uint32_t destination){
+std::vector<int32_t>* bfs_path(const G &g, const uint32_t src, const uint32_t destination){
     std::vector<int32_t>*result=new std::vector<int32_t>();
     bool flag=false;
     if(src==destination){
@@ -318,7 +318,7 @@ std::vector<int32_t>* bfs_path(G &g, const uint32_t src, const uint32_t destinat
 }
 
 template<typename G, typename F>
-std::vector<uint32_t>* bfs_path(G &g, const uint32_t src, const uint32_t destination, const F &fun) {
+std::vector<uint32_t>* bfs_path_with_f(const G &g, const uint32_t src, const uint32_t destination, const F &fun) {
     std::vector<int32_t>tmp(g.getSize(), -2);
     std::vector<uint32_t>tmp_2(g.getSize(),0);
     std::queue<uint32_t>q;
@@ -349,7 +349,7 @@ std::vector<uint32_t>* bfs_path(G &g, const uint32_t src, const uint32_t destina
 
 namespace{
     template<typename G, typename F>
-    void dfs_preorder(G &g, const uint32_t src, F &f, std::vector<bool>&is_visited){
+    void dfs_preorder(const G &g, const uint32_t src, F &f, std::vector<bool>&is_visited){
         if(is_visited[src]) return;
         is_visited[src]=true;
         f(src);
@@ -359,7 +359,7 @@ namespace{
     }
 
     template<typename G, typename F>
-    void dfs_postorder(G &g, const uint32_t src, F &f, std::vector<bool>&is_visited){
+    void dfs_postorder(const G &g, const uint32_t src, F &f, std::vector<bool>&is_visited){
         if(is_visited[src]) return;
         is_visited[src]=true;
         for(uint32_t i : g.getNeighbours(src)){
@@ -370,19 +370,19 @@ namespace{
 }
 
 template<typename G, typename F>
-void dfs_preorder(G &g, const uint32_t src, F &f){
+void dfs_preorder(const G &g, const uint32_t src, F &f){
     std::vector<bool>is_visited(g.getSize(), false);
     dfs_preorder(g, src, f, is_visited);
 }
 
 template<typename G, typename F>
-void dfs_postorder(G &g, const uint32_t src, F &f){
+void dfs_postorder(const G &g, const uint32_t src, F &f){
     std::vector<bool>is_visited(g.getSize(), false);
     dfs_postorder<G,F>(g, src, f, is_visited);
 }
 
 template<typename G, typename N, typename PQ>
-std::vector<std::pair<uint32_t, uint32_t>>* prim(G &g, const uint32_t src) {
+std::vector<std::pair<uint32_t, uint32_t>>* prim(const G &g, const uint32_t src) {
     auto result=new std::vector<std::pair<uint32_t,uint32_t>>();
     std::vector<int32_t>parent(g.getSize(), -1);
     std::vector<N>keys(g.getSize(), g.getMax());
@@ -418,7 +418,7 @@ std::vector<std::pair<uint32_t, uint32_t>>* prim(G &g, const uint32_t src) {
 }
 
 template<typename G, typename N, typename DS>
-std::vector<std::pair<uint32_t, uint32_t>>* kruskal(G &g){
+std::vector<std::pair<uint32_t, uint32_t>>* kruskal(const G &g){
     auto list=g.getListOfEdges();
     std::sort(list.begin(), list.end(), [](const auto &p1, const auto &p2){
         return p1.second<p2.second;
@@ -442,7 +442,7 @@ std::vector<std::pair<uint32_t, uint32_t>>* kruskal(G &g){
 }
 
 template<typename G, typename N, typename PQ>
-N dijkstra(G &g, const uint32_t src, const uint32_t destination) {
+N dijkstra(const G &g, const uint32_t src, const uint32_t destination) {
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
@@ -468,7 +468,7 @@ N dijkstra(G &g, const uint32_t src, const uint32_t destination) {
 }
 
 template<typename G, typename N, typename PQ>
-N dijkstra(G &g, const uint32_t src, const uint32_t destination, bool (*fun)(const uint32_t, N)) {
+N dijkstra_with_f(const G &g, const uint32_t src, const uint32_t destination, bool (*fun)(const uint32_t, N)) {
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
@@ -494,7 +494,7 @@ N dijkstra(G &g, const uint32_t src, const uint32_t destination, bool (*fun)(con
 }
 
 template<typename G, typename N, typename PQ>
-std::vector<uint32_t>* dijkstra_path(G &g, const uint32_t src, const uint32_t destination) {
+std::vector<uint32_t>* dijkstra_path(const G &g, const uint32_t src, const uint32_t destination) {
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
@@ -530,7 +530,7 @@ std::vector<uint32_t>* dijkstra_path(G &g, const uint32_t src, const uint32_t de
 }
 
 template<typename G, typename N, typename PQ, typename F>
-std::vector<uint32_t>* dijkstra_path(G &g, const uint32_t src, const uint32_t destination, bool (*fun)(uint32_t, N)) {
+std::vector<uint32_t>* dijkstra_path_with_f(const G &g, const uint32_t src, const uint32_t destination, bool (*fun)(uint32_t, N)) {
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
@@ -565,7 +565,7 @@ std::vector<uint32_t>* dijkstra_path(G &g, const uint32_t src, const uint32_t de
 
 
 template<typename G, typename N, typename PQ>
-std::unordered_map<uint32_t, N>* dijkstra(G &g, const uint32_t src, const std::vector<uint32_t> &destinations) {
+std::unordered_map<uint32_t, N>* dijkstra(const G &g, const uint32_t src, const std::vector<uint32_t> &destinations) {
     N max=g.getMax();
     std::vector<N>distance(g.getSize(), max);
     std::vector<bool>is_visited(g.getSize(), false);
@@ -601,7 +601,7 @@ std::unordered_map<uint32_t, N>* dijkstra(G &g, const uint32_t src, const std::v
 }
 
 template<typename G, typename N, typename PQ>
-std::unordered_map<uint32_t, N>* dijkstra(G &g, const uint32_t src, const std::vector<uint32_t> &destinations, bool (*fun)(uint32_t, N)) {
+std::unordered_map<uint32_t, N>* dijkstra_with_f(const G &g, const uint32_t src, const std::vector<uint32_t> &destinations, bool (*fun)(uint32_t, N)) {
     N max=g.getMax();
     std::vector<N>distance(g.getSize(), max);
     std::vector<bool>is_visited(g.getSize(), false);
@@ -637,7 +637,7 @@ std::unordered_map<uint32_t, N>* dijkstra(G &g, const uint32_t src, const std::v
 }
 
 template<typename G, typename N, typename PQ>
-std::vector<N>* dijkstra(G &g, const uint32_t src) {
+std::vector<N>* dijkstra(const G &g, const uint32_t src) {
     N max=g.getMax();
     auto *result=new std::vector<N>(g.getSize(), max);
     std::vector<bool>is_visited(g.getSize(), false);
@@ -662,7 +662,7 @@ std::vector<N>* dijkstra(G &g, const uint32_t src) {
 }
 
 template<typename G, typename N, typename PQ>
-std::vector<N>* dijkstra(G &g, const uint32_t src, bool (*fun)(uint32_t, N)) {
+std::vector<N>* dijkstra_with_f(const G &g, const uint32_t src, bool (*fun)(uint32_t, N)) {
     N max=g.getMax();
     auto *result=new std::vector<N>(g.getSize(), max);
     std::vector<bool>is_visited(g.getSize(), false);
@@ -687,7 +687,7 @@ std::vector<N>* dijkstra(G &g, const uint32_t src, bool (*fun)(uint32_t, N)) {
 }
 
 template<typename G, typename N>
-std::vector<N>* bellmanFord(G &g, const uint32_t src) {
+std::vector<N>* bellmanFord(const G &g, const uint32_t src) {
     N max=g.getMax();
     auto result=new std::vector<N>(g.getSize(), max);
     result->at(src)=0;
@@ -720,7 +720,7 @@ std::vector<N>* bellmanFord(G &g, const uint32_t src) {
 }
 
 template<typename G, typename N>
-std::vector<std::vector<N>>* floydWarshall(G &g){
+std::vector<std::vector<N>>* floydWarshall(const G &g){
     N max=g.getMax();
     std::vector<std::vector<N>>* result=new std::vector<std::vector<N>>(g.getSize(), std::vector<N>(g.getSize(), max));
 
@@ -748,7 +748,7 @@ std::vector<std::vector<N>>* floydWarshall(G &g){
 }
 
 template<typename G, typename N, typename PQ>
-N A_star(G &g, const uint32_t src, const uint32_t destination, N (*heuristic)(const uint32_t)) {
+N A_star(const G &g, const uint32_t src, const uint32_t destination, N (*heuristic)(const uint32_t)) {
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
@@ -773,7 +773,7 @@ N A_star(G &g, const uint32_t src, const uint32_t destination, N (*heuristic)(co
 }
 
 template<typename G, typename N, typename PQ>
-std::vector<uint32_t>* A_star_path(G &g, const uint32_t src, const uint32_t destination, N (*heuristic)(const uint32_t)) {
+std::vector<uint32_t>* A_star_path(const G &g, const uint32_t src, const uint32_t destination, N (*heuristic)(const uint32_t)) {
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<int32_t>prev_vertex(g.getSize(), -2);
