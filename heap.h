@@ -16,8 +16,8 @@ public:
     virtual uint32_t getSize() const=0;
     virtual std::pair<uint32_t, N> getMin() const=0;
     virtual uint32_t extractMin()=0;
-    virtual HeapNode insert(const uint32_t, const N)=0;
-    virtual void decreaseKey(HeapNode*, const N)=0;
+    virtual HeapNode insert(const uint32_t, const N&)=0;
+    virtual void decreaseKey(HeapNode*, const N&)=0;
 };
 
 template<typename N>
@@ -28,7 +28,7 @@ private:
         N value;
         uint32_t position_in_heap;
 
-        BinaryHeapNode(const uint32_t key, const N value, const uint32_t position_in_heap){
+        BinaryHeapNode(const uint32_t key, const N &value, const uint32_t position_in_heap){
             this->key=key;
             this->value=value;
             this->position_in_heap=position_in_heap;
@@ -123,7 +123,7 @@ public:
         return value_to_return;
     }
 
-    HeapNode insert(const uint32_t key, const N value) override{
+    HeapNode insert(const uint32_t key, const N &value) override{
         uint32_t index=this->getSize();
         BinaryHeapNode *ptr=new BinaryHeapNode(key, value, index);
         this->heap.push_back(ptr);
@@ -131,7 +131,7 @@ public:
         return HeapNode((void*)ptr, key);
     }
 
-    void decreaseKey(HeapNode *heap_node, const N new_value) override{
+    void decreaseKey(HeapNode *heap_node, const N &new_value) override{
         if(!heap_node->getPtr()){
             printErrorMsg(2, "DecreaseKey method in a class that represents binary heap received a pointer to NULL.");
         }
@@ -163,7 +163,7 @@ private:
         std::vector<BinomialHeapNode*>*children;
         std::vector<BinomialHeapNode*>*ptr_to_list;
 
-        BinomialHeapNode(const uint32_t key, const N value){
+        BinomialHeapNode(const uint32_t key, const N &value){
             this->key=key;
             this->value=value;
             this->degree=0;
@@ -299,7 +299,7 @@ public:
         return key_to_return;
     }
 
-    HeapNode insert(const uint32_t key, const N value) override{
+    HeapNode insert(const uint32_t key, const N &value) override{
         BinomialHeapNode *ptr=new BinomialHeapNode(key, value);
         const BinomialHeapNode *r_ptr=ptr;
         ptr->ptr_to_list=&(this->list_of_heads);
@@ -312,7 +312,7 @@ public:
         return HeapNode((void*)r_ptr, key);
     }
 
-    void decreaseKey(HeapNode *heap_node, const N new_value) override{
+    void decreaseKey(HeapNode *heap_node, const N &new_value) override{
         if(!heap_node->getPtr()){
             printErrorMsg(2, "DecreaseKey method in a class that represents binary heap received a pointer to NULL.");
         }
@@ -356,7 +356,7 @@ private:
         uint32_t degree;
         bool mark;
 
-        FibonacciHeapNode(const uint32_t key, const N value){
+        FibonacciHeapNode(const uint32_t key, const N &value){
             this->key=key;
             this->value=value;
             this->child=this->left_s=this->right_s=this->parent=nullptr;
@@ -466,7 +466,7 @@ public:
         return this->size;
     }
 
-    HeapNode insert(const uint32_t key, const N value) override{
+    HeapNode insert(const uint32_t key, const N &value) override{
         FibonacciHeapNode *ptr=new FibonacciHeapNode(key,value);
         addToList(ptr,this->min);
         if(this->min==nullptr || this->min->value>value) this->min=ptr;
@@ -542,7 +542,7 @@ public:
         return return_key;
     }
 
-    void decreaseKey(HeapNode *heap_node, const N new_value) override{
+    void decreaseKey(HeapNode *heap_node, const N &new_value) override{
         if(!heap_node->getPtr()){
             printErrorMsg(2, "DecreaseKey method in a class that represents binary heap received a pointer to NULL.");
         }

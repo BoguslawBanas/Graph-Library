@@ -14,7 +14,7 @@ public:
 
     ~Disjoint_Set()=default;
 
-    uint32_t find(const uint32_t vertex) {
+    uint32_t find(const uint32_t vertex) const{
         if(vertex>=s.size()){
             printErrorMsg(2, "Trying to reach an index outside of a size of a Disjoint_set.");
         }
