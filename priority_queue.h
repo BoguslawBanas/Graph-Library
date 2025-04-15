@@ -21,15 +21,15 @@ public:
         v.clear();
     };
 
-    std::pair<uint32_t, N> top(){
+    std::pair<uint32_t, N> top() const{
         return h->getMin();
     }
 
-    bool empty() {
+    bool empty() const{
         return h->isEmpty();
     }
 
-    uint32_t size() {
+    uint32_t size() const{
         return h->getSize();
     }
 
@@ -44,7 +44,7 @@ public:
 
     void pop() {
         uint32_t index=h->extractMin();
-        v[index]=HeapNode(nullptr, index);
+        v[index]=HeapNode(nullptr);
     }
 };
 

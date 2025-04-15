@@ -128,7 +128,7 @@ public:
         BinaryHeapNode *ptr=new BinaryHeapNode(key, value, index);
         this->heap.push_back(ptr);
         this->siftUp(index);
-        return HeapNode((void*)ptr, key);
+        return HeapNode((void*)ptr);
     }
 
     void decreaseKey(HeapNode *heap_node, const N &new_value) override{
@@ -309,7 +309,7 @@ public:
         }
         this->list_of_heads[ptr->degree]=ptr;
         ++this->size;
-        return HeapNode((void*)r_ptr, key);
+        return HeapNode((void*)r_ptr);
     }
 
     void decreaseKey(HeapNode *heap_node, const N &new_value) override{
@@ -471,7 +471,7 @@ public:
         addToList(ptr,this->min);
         if(this->min==nullptr || this->min->value>value) this->min=ptr;
         ++this->size;
-        return HeapNode((void*)ptr, key);
+        return HeapNode((void*)ptr);
     }
 
     std::pair<uint32_t,N> getMin() const override {

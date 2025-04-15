@@ -6,26 +6,19 @@
 class HeapNode {
     private:
         void *ptr;
-        uint32_t key;
     public:
         HeapNode(){
             this->ptr=nullptr;
-            this->key=1<<31;
         }
     
-        HeapNode(void *ptr, uint32_t key){
+        HeapNode(void *ptr){
             this->ptr=ptr;
-            this->key=key;
         }
     
         ~HeapNode()=default;
     
         void *getPtr(){
             return this->ptr;
-        }
-    
-        uint32_t getKey(){
-            return this->key;
         }
     };
 
