@@ -17,7 +17,7 @@ public:
     virtual std::pair<uint32_t, N> getMin() const=0;
     virtual uint32_t extractMin()=0;
     virtual HeapNode insert(const uint32_t, const N&)=0;
-    virtual void decreaseKey(HeapNode*, const N&)=0;
+    virtual void decreaseValue(HeapNode*, const N&)=0;
 };
 
 template<typename N>
@@ -131,7 +131,7 @@ public:
         return HeapNode((void*)ptr);
     }
 
-    void decreaseKey(HeapNode *heap_node, const N &new_value) override{
+    void decreaseValue(HeapNode *heap_node, const N &new_value) override{
         if(!heap_node->getPtr()){
             printErrorMsg(2, "DecreaseKey method in a class that represents binary heap received a pointer to NULL.");
         }
@@ -312,7 +312,7 @@ public:
         return HeapNode((void*)r_ptr);
     }
 
-    void decreaseKey(HeapNode *heap_node, const N &new_value) override{
+    void decreaseValue(HeapNode *heap_node, const N &new_value) override{
         if(!heap_node->getPtr()){
             printErrorMsg(2, "DecreaseKey method in a class that represents binary heap received a pointer to NULL.");
         }
@@ -542,7 +542,7 @@ public:
         return return_key;
     }
 
-    void decreaseKey(HeapNode *heap_node, const N &new_value) override{
+    void decreaseValue(HeapNode *heap_node, const N &new_value) override{
         if(!heap_node->getPtr()){
             printErrorMsg(2, "DecreaseKey method in a class that represents binary heap received a pointer to NULL.");
         }

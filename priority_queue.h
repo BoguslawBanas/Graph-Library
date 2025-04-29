@@ -35,7 +35,7 @@ public:
 
     void push(const uint32_t node, const N value) {
         if(v[node].getPtr()){
-            h->decreaseKey(&v[node], value);
+            h->decreaseValue(&v[node], value);
         }
         else{
             v[node]=h->insert(node, value);
