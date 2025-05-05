@@ -82,6 +82,25 @@ private:
         this->siftUp(ptr->position_in_heap);
     }
 
+    void minHeapify(const uint32_t idx){
+        if(idx>=this->getSize()){
+            return;
+        }
+        uint32_t min=idx;
+        uint32_t left_s=2*idx+1;
+        uint32_t right_s=2*idx+2;
+        if(left_s<this->getSize() && this->heap[left_s]->value<this->heap[min]->value){
+            min=left_s;
+        }
+        if(right_s<this->getSize() && this->heap[right_s]->value<this->heap[min]->value){
+            min=right_s;
+        }
+        if(min!=idx){
+            this->swapNodes(min, idx);
+            this->minHeapify(min);
+        }
+    }
+
 public:
     BinaryHeap()=default;
 
@@ -146,8 +165,15 @@ public:
 
     void unionize(BinaryHeap *heap_to_union){
         uint32_t size_heap_to_union=heap_to_union->heap.size();
-        for(int i=0;i<size_heap_to_union;++i){
-            this->insert(heap_to_union->heap[i]);
+        uint32_t size_before_unionize=this->getSize();
+
+        for(uint32_t i=0;i<size_heap_to_union;++i){
+            this->heap.push_back(heap_to_union->heap[i]);
+            this->heap[size_before_unionize+i]->position_in_heap=size_before_unionize+i;
+        }
+
+        for(int32_t i=this->getSize()/2-1;i>=0;--i){
+            this->minHeapify(i);
         }
     }
 };

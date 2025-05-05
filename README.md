@@ -66,7 +66,7 @@ Każda z tych klas udostępnia zestaw metod:
 | getMin()      | std::pair<uint32_t, N>   | Zwraca najmniejszy element w kopcu.                | ❌                           |
 | extractMin()  | uint32_t   | Usuwa i zwraca najmniejszy element z kopca.        | ✅                           |
 | insert(const uint32_t, const N&)      | HeapNode        | Wstawia nowy element do kopca.                     | ✅                           |
-| decreaseKey(HeapNode*, const N&) | void        | Zmniejsza wartość klucza dla danego elementu.      | ✅                           |
+| decreaseValue(HeapNode*, const N&) | void        | Zmniejsza wartość dla danej komórki znajdującej się w kopcu.      | ✅                           |
 
 HeapNode to specjalna klasa, której instancja jest zwracana użytkownikowi przy wyłowaniu metody 'insert', która wystawia jeden akcesor:
 - getPtr(): metoda zwraca wskaźnik na void, który wskazuje na komórkę w pamięci, gdzie znajduje się komórka umiejscowiona w kopcu.
