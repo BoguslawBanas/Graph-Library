@@ -175,6 +175,9 @@ public:
         for(int32_t i=this->getSize()/2-1;i>=0;--i){
             this->minHeapify(i);
         }
+
+        heap_to_union->heap.clear();
+        delete heap_to_union;
     }
 };
 
