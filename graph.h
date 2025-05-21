@@ -276,7 +276,7 @@ public:
         if(saveFlag){
             for(auto i : adjacencyList[v1]){
                 if(i.first==v2){
-                    i.second==weight;
+                    i.second=weight;
                     flag=true;
                     break;
                 }
