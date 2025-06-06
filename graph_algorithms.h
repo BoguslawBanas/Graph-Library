@@ -420,7 +420,7 @@ std::vector<std::pair<uint32_t, uint32_t>>* prim(const G &g, const uint32_t src)
 template<typename G, typename N, typename DS>
 std::vector<std::pair<uint32_t, uint32_t>>* kruskal(const G &g){
     auto list=g.getListOfEdges();
-    std::sort(list.begin(), list.end(), [](const auto &p1, const auto &p2){
+    std::sort(list.begin(), list.end(), [](const std::pair<uint32_t, uint32_t> &p1, const std::pair<uint32_t, uint32_t> &p2){
         return p1.second<p2.second;
     });
     DS ds(g.getSize());
