@@ -702,18 +702,21 @@ public:
     ~MatrixGraphDirected()=default;
 
     void transpose(){
+        const uint32_t size=this->getSize();
         std::vector<std::vector<bool>>tmp;
-        for(uint32_t i=0;i<this->getSize();++i){
-            tmp.push_back(std::vector<bool>(this->getSize(), false));
+        for(uint32_t i=0;i<size;++i){
+            tmp.push_back(std::vector<bool>(size, false));
         }
 
-        for(uint32_t i=0;i<this->getSize();++i) {
-            for(uint32_t j=0;j<this->getSize();++j) {
-                adjacencyMatrix[i][j]=tmp[j][i];
+        for(uint32_t i=0;i<size;++i) {
+            for(uint32_t j=0;j<size;++j) {
+                tmp[j][i]=adjacencyMatrix[i][j];
             }
         }
-        for(uint32_t i=0;i<this->getSize();++i) {
-            adjacencyMatrix[i]=tmp[i];
+        for(uint32_t i=0;i<size;++i) {
+            for(uint32_t j=0;j<size;++j){
+                adjacencyMatrix[j][i]=tmp[i][j];
+            }
         }
     }
 
