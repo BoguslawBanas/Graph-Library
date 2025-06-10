@@ -703,19 +703,12 @@ public:
 
     void transpose(){
         const uint32_t size=this->getSize();
-        std::vector<std::vector<bool>>tmp;
+        bool tmp;
         for(uint32_t i=0;i<size;++i){
-            tmp.push_back(std::vector<bool>(size, false));
-        }
-
-        for(uint32_t i=0;i<size;++i) {
-            for(uint32_t j=0;j<size;++j) {
-                tmp[j][i]=adjacencyMatrix[i][j];
-            }
-        }
-        for(uint32_t i=0;i<size;++i) {
-            for(uint32_t j=0;j<size;++j){
-                adjacencyMatrix[j][i]=tmp[i][j];
+            for(uint32_t j=i+1;j<size;++j){
+                tmp=this->adjacencyMatrix[i][j];
+                this->adjacencyMatrix[i][j]=this->adjacencyMatrix[j][i];
+                this->adjacencyMatrix[j][i]=tmp;
             }
         }
     }
@@ -798,18 +791,11 @@ public:
     ~MatrixGraphWeightedAndDirected() = default;
 
     void transpose(){
-        std::vector<std::vector<N>>tmp;
-        for(uint32_t i=0;i<this->getSize();++i){
-            tmp.push_back(this->getSize(), this->getMax());
-        }
-
-        for(uint32_t i=0;i<this->getSize();++i) {
-            for(uint32_t j=0;j<this->getSize();++j) {
-                adjacencyMatrix[i][j]=tmp[j][i];
+        uint32_t size=this->getSize();
+        for(uint32_t i=0;i<size;++i){
+            for(uint32_t j=i+1;j<size;++j){
+                std::swap(this->adjacencyMatrix[i][j], this->adjacencyMatrix[j][i]);
             }
-        }
-        for(uint32_t i=0;i<this->getSize();++i) {
-            adjacencyMatrix[i]=tmp[i];
         }
     }
 
@@ -927,7 +913,7 @@ public:
             printErrorMsg(2, "The second argument of a method areVertexesConnected(uint32_t, uint32_t) in a class MatrixGraphWeighted<N> is out of bounds.");
         }
         if(first<second) std::swap(first, second);
-        return adjacencyMatrix[first][second];
+        return adjacencyMatrix[first][second]!=this->max;
     }
 
     uint32_t addVertex() override{
