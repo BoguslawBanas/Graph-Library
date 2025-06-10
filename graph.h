@@ -682,7 +682,7 @@ public:
         std::vector<std::pair<uint32_t, uint32_t>>result;
         for(uint32_t i=0;i<getSize();++i) {
             for(uint32_t j=0;j<i+1;++j) {
-                if(adjacencyMatrix[i][j]) result.push_back(std::pair<uint32_t, uint32_t>(i,j));
+                if(adjacencyMatrix[i][j]) result.push_back(std::pair<uint32_t, uint32_t>(j,i));
             }
         }
         return result;
@@ -991,7 +991,7 @@ public:
         for(uint32_t i=0;i<getSize();++i) {
             for(uint32_t j=0;j<i+1;++j) {
                 if(adjacencyMatrix[i][j]!=this->max) {
-                    result.push_back(std::pair<std::pair<uint32_t,uint32_t>,N>(std::pair<uint32_t,uint32_t>(i,j),adjacencyMatrix[i][j]));
+                    result.push_back(std::pair<std::pair<uint32_t,uint32_t>,N>(std::pair<uint32_t,uint32_t>(j,i),adjacencyMatrix[i][j]));
                 }
             }
         }
