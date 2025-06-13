@@ -383,7 +383,14 @@ void dfs_postorder(const G &g, const uint32_t src, F &f){
 
 template<typename G, typename N, typename PQ>
 std::vector<std::pair<uint32_t, uint32_t>>* prim(const G &g, const uint32_t src) {
+    if(g.getSize()==0){
+        return nullptr;
+    }
     auto result=new std::vector<std::pair<uint32_t,uint32_t>>();
+    if(g.getSize()==1){
+        return result;
+    }
+    
     std::vector<int32_t>parent(g.getSize(), -1);
     std::vector<N>keys(g.getSize(), g.getMax());
     std::vector<bool>mstSet(g.getSize(), false);
@@ -419,26 +426,31 @@ std::vector<std::pair<uint32_t, uint32_t>>* prim(const G &g, const uint32_t src)
 
 template<typename G, typename N, typename DS>
 std::vector<std::pair<uint32_t, uint32_t>>* kruskal(const G &g){
+    if(g.getSize()==0){
+        return nullptr;
+    }
+    auto result=new std::vector<std::pair<uint32_t,uint32_t>>();
+    if(g.getSize()==1){
+        return result;
+    }
+
     auto list=g.getListOfEdges();
-    std::sort(list.begin(), list.end(), [](const std::pair<uint32_t, uint32_t> &p1, const std::pair<uint32_t, uint32_t> &p2){
+    std::sort(list.begin(), list.end(), [](const std::pair<std::pair<uint32_t, uint32_t>, N> &p1, const std::pair<std::pair<uint32_t, uint32_t>, N> &p2){
         return p1.second<p2.second;
     });
+
     DS ds(g.getSize());
-    auto result=new std::vector<std::pair<uint32_t,uint32_t>>();
-    uint32_t i1,i2;
-    for(auto &i : list){
-        i1=ds.find(i.first.first);
-        i2=ds.find(i.first.second);
-        if(i1!=i2){
-            ds.unionize_f(i1,i2);
-            result->push_back(i.first);
+    for(auto &it : list){
+        if(!ds.areNodesConnected(it.first.first, it.first.second)){
+            ds.unionize(it.first.first, it.first.second);
+            result->push_back(it.first);
             if(result->size()==g.getSize()-1){
                 return result;
             }
         }
     }
     delete result;
-    return NULL;
+    return nullptr;
 }
 
 template<typename G, typename N, typename PQ>
