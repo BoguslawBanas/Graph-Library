@@ -115,6 +115,12 @@ bool isBipartite(const G &g){
 
 template<typename G>
 int32_t bfs(const G &g, const uint32_t src, const uint32_t destination){
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function bfs(const G&, const uint32_t, const uint32_t) is outside of the graph.");
+    }
+    if(destination>=g.getSize()){
+        printErrorMsg(2, "Agrument destination in function bfs(const G&, const uint32_t, const uint32_t) is outside of the graph.");
+    }
     if(src==destination) return 0;
     std::queue<uint32_t>q;
     std::vector<int32_t>tmp(g.getSize(), -1);
@@ -135,6 +141,9 @@ int32_t bfs(const G &g, const uint32_t src, const uint32_t destination){
 
 template<typename G>
 std::unordered_map<uint32_t, int32_t>* bfs(const G& g, const uint32_t src, const std::vector<uint32_t>& destinations){
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function bfs(const G&, const uint32_t, const std::vector<uint32_t>&) is outside of the graph.");
+    }
     if(destinations.empty()){
         return new std::unordered_map<uint32_t, int32_t>();
     }
@@ -142,6 +151,9 @@ std::unordered_map<uint32_t, int32_t>* bfs(const G& g, const uint32_t src, const
     std::vector<bool>is_important(g.getSize(), false);
     std::vector<int32_t>tmp(g.getSize(), -1);
     for(uint32_t i=0;i<destinations.size();++i){
+        if(destinations[i]>=g.getSize()){
+            printErrorMsg(2, "Member of destinations argument in function bfs(const G&, const uint32_t, const std::vector<uint32_t>&) is outside of the graph.");
+        }
         result->insert({destinations[i],-1});
         is_important[destinations[i]]=true;
     }
@@ -171,6 +183,9 @@ std::unordered_map<uint32_t, int32_t>* bfs(const G& g, const uint32_t src, const
 
 template<typename G>
 std::vector<int32_t>* bfs(const G &g, const uint32_t src){
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function bfs(const G&, const uint32_t) is outside of the graph.");
+    }
     auto result=new std::vector<int32_t>(g.getSize(), -1);
     std::queue<uint32_t>q;
     q.push(src);
@@ -189,6 +204,12 @@ std::vector<int32_t>* bfs(const G &g, const uint32_t src){
 
 template<typename G, typename F>
 int32_t bfs_with_f(const G &g, const uint32_t src, const uint32_t destination, const F &fun){
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function bfs(const G&, const uint32_t, const uint32_t, const F&) is outside of the graph.");
+    }
+    if(destination>=g.getSize()){
+        printErrorMsg(2, "Agrument destination in function bfs(const G&, const uint32_t, const uint32_t, const F&) is outside of the graph.");
+    }
     if(src==destination) return 0;
     std::queue<int32_t>q;
     std::vector<int32_t>tmp(g.getSize(), -1);
@@ -209,6 +230,9 @@ int32_t bfs_with_f(const G &g, const uint32_t src, const uint32_t destination, c
 
 template<typename G, typename F>
 std::unordered_map<uint32_t, int32_t>* bfs_with_f(const G& g, const uint32_t src, const std::vector<uint32_t>& destinations, const F &fun){
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function bfs_with_f(const G&, const uint32_t, const std::vector<uint32_t>&, const F&) is outside of the graph.");
+    }
     if(destinations.empty()){
         return new std::unordered_map<uint32_t, int32_t>();
     }
@@ -216,6 +240,9 @@ std::unordered_map<uint32_t, int32_t>* bfs_with_f(const G& g, const uint32_t src
     std::vector<bool>is_important(g.getSize(), false);
     std::vector<int32_t>tmp(g.getSize(), -1);
     for(uint32_t i=0;i<destinations.size();++i){
+        if(destinations[i]>=g.getSize()){
+            printErrorMsg(2, "Member of destinations argument in function bfs_with_f(const G&, const uint32_t, const std::vector<uint32_t>&, const F&) is outside of the graph.");
+        }
         result->insert({destinations[i],-1});
         is_important[destinations[i]]=true;
     }
@@ -245,6 +272,9 @@ std::unordered_map<uint32_t, int32_t>* bfs_with_f(const G& g, const uint32_t src
 
 template<typename G, typename F>
 std::vector<int32_t>* bfs_with_f(const G &g, const uint32_t src, const F &fun){
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function bfs(const G&, const uint32_t, const F&) is outside of the graph.");
+    }
     auto result=new std::vector<int32_t>(g.getSize(), -1);
     std::queue<uint32_t>q;
     q.push(src);
@@ -263,6 +293,9 @@ std::vector<int32_t>* bfs_with_f(const G &g, const uint32_t src, const F &fun){
 
 template<typename G, typename F>
 void bfs_functor(const G &g, const uint32_t src, F &f){
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function bfs_functor(const G&, const uint32_t, F&) is outside of the graph.");
+    }
     std::vector<bool>is_visited(g.getSize(), false);
     std::queue<uint32_t>q;
     q.push(src);
@@ -281,6 +314,12 @@ void bfs_functor(const G &g, const uint32_t src, F &f){
 
 template<typename G>
 std::vector<int32_t>* bfs_path(const G &g, const uint32_t src, const uint32_t destination){
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function bfs_path(const G&, const uint32_t, const uint32_t) is outside of the graph.");
+    }
+    if(destination>=g.getSize()){
+        printErrorMsg(2, "Agrument destination in function bfs_path(const G&, const uint32_t, const uint32_t) is outside of the graph.");
+    }
     std::vector<int32_t>*result=new std::vector<int32_t>();
     bool flag=false;
     if(src==destination){
@@ -319,6 +358,12 @@ std::vector<int32_t>* bfs_path(const G &g, const uint32_t src, const uint32_t de
 
 template<typename G, typename F>
 std::vector<uint32_t>* bfs_path_with_f(const G &g, const uint32_t src, const uint32_t destination, const F &fun) {
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function bfs_path_with_f(const G&, const uint32_t, const uint32_t, const F&) is outside of the graph.");
+    }
+    if(destination>=g.getSize()){
+        printErrorMsg(2, "Agrument destination in function bfs_path_with_f(const G&, const uint32_t, const uint32_t, const F&) is outside of the graph.");
+    }
     std::vector<int32_t>tmp(g.getSize(), -2);
     std::vector<uint32_t>tmp_2(g.getSize(),0);
     std::queue<uint32_t>q;
@@ -371,18 +416,27 @@ namespace{
 
 template<typename G, typename F>
 void dfs_preorder(const G &g, const uint32_t src, F &f){
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function dfs_preorder(const G&, const uint32_t, const F&) is outside of the graph.");
+    }
     std::vector<bool>is_visited(g.getSize(), false);
     dfs_preorder(g, src, f, is_visited);
 }
 
 template<typename G, typename F>
 void dfs_postorder(const G &g, const uint32_t src, F &f){
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function dfs_postorder(const G&, const uint32_t, const F&) is outside of the graph.");
+    }
     std::vector<bool>is_visited(g.getSize(), false);
     dfs_postorder<G,F>(g, src, f, is_visited);
 }
 
 template<typename G, typename N, typename PQ>
 std::vector<std::pair<uint32_t, uint32_t>>* prim(const G &g, const uint32_t src) {
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function prim(const G&, const uint32_t) is outside of the graph.");
+    }
     if(g.getSize()==0){
         return nullptr;
     }
@@ -390,7 +444,7 @@ std::vector<std::pair<uint32_t, uint32_t>>* prim(const G &g, const uint32_t src)
     if(g.getSize()==1){
         return result;
     }
-    
+
     std::vector<int32_t>parent(g.getSize(), -1);
     std::vector<N>keys(g.getSize(), g.getMax());
     std::vector<bool>mstSet(g.getSize(), false);
@@ -455,6 +509,12 @@ std::vector<std::pair<uint32_t, uint32_t>>* kruskal(const G &g){
 
 template<typename G, typename N, typename PQ>
 N dijkstra(const G &g, const uint32_t src, const uint32_t destination) {
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function dijkstra(const G&, const uint32_t, const uint32_t) is outside of the graph.");
+    }
+    if(destination>=g.getSize()){
+        printErrorMsg(2, "Agrument destination in function dijkstra(const G&, const uint32_t, const uint32_t) is outside of the graph.");
+    }
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
@@ -481,6 +541,12 @@ N dijkstra(const G &g, const uint32_t src, const uint32_t destination) {
 
 template<typename G, typename N, typename PQ, typename F>
 N dijkstra_with_f(const G &g, const uint32_t src, const uint32_t destination, const F &fun) {
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function dijkstra_with_f(const G&, const uint32_t, const uint32_t, const F&) is outside of the graph.");
+    }
+    if(destination>=g.getSize()){
+        printErrorMsg(2, "Agrument destination in function dijkstra_with_f(const G&, const uint32_t, const uint32_t, const F&) is outside of the graph.");
+    }
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
@@ -507,6 +573,12 @@ N dijkstra_with_f(const G &g, const uint32_t src, const uint32_t destination, co
 
 template<typename G, typename N, typename PQ>
 std::vector<uint32_t>* dijkstra_path(const G &g, const uint32_t src, const uint32_t destination) {
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function dijkstra_path(const G&, const uint32_t, const uint32_t) is outside of the graph.");
+    }
+    if(destination>=g.getSize()){
+        printErrorMsg(2, "Agrument destination in function dijkstra_path(const G&, const uint32_t, const uint32_t) is outside of the graph.");
+    }
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
@@ -543,6 +615,12 @@ std::vector<uint32_t>* dijkstra_path(const G &g, const uint32_t src, const uint3
 
 template<typename G, typename N, typename PQ, typename F>
 std::vector<uint32_t>* dijkstra_path_with_f(const G &g, const uint32_t src, const uint32_t destination, const F &fun) {
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function dijkstra_path_with_f(const G&, const uint32_t, const uint32_t, const F&) is outside of the graph.");
+    }
+    if(destination>=g.getSize()){
+        printErrorMsg(2, "Agrument destination in function dijkstra_path_with_f(const G&, const uint32_t, const uint32_t, const F&) is outside of the graph.");
+    }
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
@@ -578,6 +656,9 @@ std::vector<uint32_t>* dijkstra_path_with_f(const G &g, const uint32_t src, cons
 
 template<typename G, typename N, typename PQ>
 std::unordered_map<uint32_t, N>* dijkstra(const G &g, const uint32_t src, const std::vector<uint32_t> &destinations) {
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function dijkstra(const G&, const uint32_t, const std::vector<uint32_t>&) is outside of the graph.");
+    }
     N max=g.getMax();
     std::vector<N>distance(g.getSize(), max);
     std::vector<bool>is_visited(g.getSize(), false);
@@ -585,6 +666,9 @@ std::unordered_map<uint32_t, N>* dijkstra(const G &g, const uint32_t src, const 
     std::vector<bool>is_important(g.getSize(), false);
     uint32_t top;
     for(auto &i : destinations) {
+        if(i>=g.getSize()){
+            printErrorMsg(2, "Member of destinations argument in function dijkstra(const G&, const uint32_t, const std::vector<uint32_t>&) is outside of the graph.");
+        }
         is_important[i]=true;
         result->insert({i, max});
     }
@@ -614,6 +698,9 @@ std::unordered_map<uint32_t, N>* dijkstra(const G &g, const uint32_t src, const 
 
 template<typename G, typename N, typename PQ, typename F>
 std::unordered_map<uint32_t, N>* dijkstra_with_f(const G &g, const uint32_t src, const std::vector<uint32_t> &destinations, const F &fun) {
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function dijkstra_with_f(const G&, const uint32_t, const std::vector<uint32_t>&, const F&) is outside of the graph.");
+    }
     N max=g.getMax();
     std::vector<N>distance(g.getSize(), max);
     std::vector<bool>is_visited(g.getSize(), false);
@@ -622,6 +709,9 @@ std::unordered_map<uint32_t, N>* dijkstra_with_f(const G &g, const uint32_t src,
     uint32_t top;
 
     for(auto &i : destinations) {
+        if(i>=g.getSize()){
+            printErrorMsg(2, "Member of destinations argument in function dijkstra_with_f(const G&, const uint32_t, const std::vector<uint32_t>&, const F&) is outside of the graph.");
+        }
         is_important[i]=true;
         result->insert({i, max});
     }
@@ -650,6 +740,9 @@ std::unordered_map<uint32_t, N>* dijkstra_with_f(const G &g, const uint32_t src,
 
 template<typename G, typename N, typename PQ>
 std::vector<N>* dijkstra(const G &g, const uint32_t src) {
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function dijkstra(const G&, const uint32_t) is outside of the graph.");
+    }
     N max=g.getMax();
     auto *result=new std::vector<N>(g.getSize(), max);
     std::vector<bool>is_visited(g.getSize(), false);
@@ -675,6 +768,9 @@ std::vector<N>* dijkstra(const G &g, const uint32_t src) {
 
 template<typename G, typename N, typename PQ, typename F>
 std::vector<N>* dijkstra_with_f(const G &g, const uint32_t src, const F &fun) {
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function dijkstra_with_f(const G&, const uint32_t) is outside of the graph.");
+    }
     N max=g.getMax();
     auto *result=new std::vector<N>(g.getSize(), max);
     std::vector<bool>is_visited(g.getSize(), false);
@@ -700,6 +796,9 @@ std::vector<N>* dijkstra_with_f(const G &g, const uint32_t src, const F &fun) {
 
 template<typename G, typename N>
 std::vector<N>* bellmanFord(const G &g, const uint32_t src) {
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function bellmanFord(const G&, const uint32_t) is outside of the graph.");
+    }
     N max=g.getMax();
     auto result=new std::vector<N>(g.getSize(), max);
     result->at(src)=0;
@@ -761,6 +860,12 @@ std::vector<std::vector<N>>* floydWarshall(const G &g){
 
 template<typename G, typename N, typename PQ, typename H>
 N A_star(const G &g, const uint32_t src, const uint32_t destination, const H &heuristic) {
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function A_star(const G&, const uint32_t, const uint32_t, const H&) is outside of the graph.");
+    }
+    if(destination>=g.getSize()){
+        printErrorMsg(2, "Agrument destination in function A_star(const G&, const uint32_t, const uint32_t, const H&) is outside of the graph.");
+    }
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<N>distance(g.getSize(), max);
@@ -786,6 +891,12 @@ N A_star(const G &g, const uint32_t src, const uint32_t destination, const H &he
 
 template<typename G, typename N, typename PQ, typename H>
 std::vector<uint32_t>* A_star_path(const G &g, const uint32_t src, const uint32_t destination, const H &heuristic) {
+    if(src>=g.getSize()){
+        printErrorMsg(2, "Agrument src in function A_star_path(const G&, const uint32_t, const uint32_t, const H&) is outside of the graph.");
+    }
+    if(destination>=g.getSize()){
+        printErrorMsg(2, "Agrument destination in function A_star_path(const G&, const uint32_t, const uint32_t, const H&) is outside of the graph.");
+    }
     N max=g.getMax();
     std::vector<bool>is_visited(g.getSize(), false);
     std::vector<int32_t>prev_vertex(g.getSize(), -2);
