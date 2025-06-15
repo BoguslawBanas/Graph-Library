@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <unordered_map>
 #include <algorithm>
+#include "error_info.h"
 
 template<typename G>
 bool isWeaklyConnected(const G &g){
