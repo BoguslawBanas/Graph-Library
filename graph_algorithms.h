@@ -88,7 +88,7 @@ bool isStronglyConnected(G &g){
 
 template<typename G>
 bool isBipartite(const G &g){
-    if(g.getSize()==0) return false;
+    if(g.getSize()==0) return true;
     for(uint32_t i=0;i<g.getSize();++i) {
         if(g.areVertexesConnected(i,i)) return false;
     }
