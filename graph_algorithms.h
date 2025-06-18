@@ -9,8 +9,8 @@
 #include "error_info.h"
 
 template<typename G>
-bool isWeaklyConnected(const G &g){
-    if(g.getSize()==0) return false;
+bool isWeaklyConnected(G &g){
+    if(g.getSize()==0) return true;
     if(!g.isDirected()){
         return isStronglyConnected(g);
     }
@@ -48,7 +48,7 @@ bool isWeaklyConnected(const G &g){
 
 template<typename G>
 bool isStronglyConnected(G &g){
-    if(g.getSize()==0) return false;
+    if(g.getSize()==0) return true;
     uint32_t counter=1;
     std::queue<uint32_t>q;
     std::vector<bool>v(g.getSize(), false);
@@ -71,6 +71,8 @@ bool isStronglyConnected(G &g){
     g.transpose();
     counter=1;
     for(uint32_t i=0;i<g.getSize();++i) v[i]=false;
+    v[0]=true;
+    q.push(0);
     while(!q.empty()){
         for(uint32_t i : g.getNeighbours(q.front())){
             if(!v[i]){
