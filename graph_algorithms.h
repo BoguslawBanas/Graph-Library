@@ -606,9 +606,14 @@ std::vector<uint32_t>* dijkstra_path(const G &g, const uint32_t src, const uint3
             }
         }
     }
+
+    if(!is_visited[destination]){
+        return nullptr;
+    }
+
     auto *result=new std::vector<uint32_t>();
     int32_t tmp=destination;
-    do {
+    do{
         result->push_back(tmp);
         tmp=neighbours[tmp];
     }while(tmp!=-1);
@@ -646,9 +651,14 @@ std::vector<uint32_t>* dijkstra_path_with_f(const G &g, const uint32_t src, cons
             }
         }
     }
+
+    if(!is_visited[destination]){
+        return nullptr;
+    }
+
     auto *result=new std::vector<uint32_t>();
     int32_t tmp=destination;
-    do {
+    do{
         result->push_back(tmp);
         tmp=neighbours[tmp];
     }while(tmp!=-1);
@@ -839,7 +849,13 @@ std::vector<std::vector<N>>* floydWarshall(const G &g){
     std::vector<std::vector<N>>* result=new std::vector<std::vector<N>>(g.getSize(), std::vector<N>(g.getSize(), max));
 
     for(uint32_t i=0;i<g.getSize();++i) {
-        for(auto j : g.getNeighboursWithWeights(i)) result->at(i)[j.first]=j.second;
+        for(auto j : g.getNeighboursWithWeights(i)){
+            if(i==j.first && j.second<0){
+                delete result;
+                return nullptr;
+            }
+            result->at(i)[j.first]=j.second;
+        }
         result->at(i)[i]=0;
     }
 
@@ -924,10 +940,12 @@ std::vector<uint32_t>* A_star_path(const G &g, const uint32_t src, const uint32_
             }
         }
     }
-    if(is_visited[destination]==-1){
+
+    if(!is_visited[destination]){
         delete path;
         return nullptr;
     }
+    
     int32_t tmp=destination;
     do {
         path->push_back(tmp);
