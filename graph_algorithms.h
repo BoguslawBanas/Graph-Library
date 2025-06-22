@@ -316,14 +316,14 @@ void bfs_functor(const G &g, const uint32_t src, F &f){
 }
 
 template<typename G>
-std::vector<int32_t>* bfs_path(const G &g, const uint32_t src, const uint32_t destination){
+std::vector<uint32_t>* bfs_path(const G &g, const uint32_t src, const uint32_t destination){
     if(src>=g.getSize()){
         printErrorMsg(2, "Agrument src in function bfs_path(const G&, const uint32_t, const uint32_t) is outside of the graph.");
     }
     if(destination>=g.getSize()){
         printErrorMsg(2, "Agrument destination in function bfs_path(const G&, const uint32_t, const uint32_t) is outside of the graph.");
     }
-    std::vector<int32_t>*result=new std::vector<int32_t>();
+    std::vector<uint32_t>*result=new std::vector<uint32_t>();
     bool flag=false;
     if(src==destination){
         result->push_back(src);
@@ -367,6 +367,11 @@ std::vector<uint32_t>* bfs_path_with_f(const G &g, const uint32_t src, const uin
     if(destination>=g.getSize()){
         printErrorMsg(2, "Agrument destination in function bfs_path_with_f(const G&, const uint32_t, const uint32_t, const F&) is outside of the graph.");
     }
+    std::vector<uint32_t>*result=new std::vector<uint32_t>();
+    if(src==destination){
+        result->push_back(src);
+        return result;
+    }
     std::vector<int32_t>tmp(g.getSize(), -2);
     std::vector<uint32_t>tmp_2(g.getSize(),0);
     std::queue<uint32_t>q;
@@ -383,9 +388,9 @@ std::vector<uint32_t>* bfs_path_with_f(const G &g, const uint32_t src, const uin
         q.pop();
     }
     if(tmp[destination]==-2) {
+        delete result;
         return nullptr;
     }
-    std::vector<uint32_t>*result=new std::vector<uint32_t>();
     int32_t t=destination;
     do {
         result->push_back(t);
@@ -637,7 +642,7 @@ std::vector<uint32_t>* dijkstra_path_with_f(const G &g, const uint32_t src, cons
 
     neighbours[src]=-1;
     distance[src]=0;
-    PQ pq;
+    PQ pq(g.getSize());
     pq.push(src,0);
     while(!pq.empty() && !is_visited[destination]) {
         top=pq.top().first;
