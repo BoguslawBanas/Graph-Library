@@ -350,7 +350,7 @@ std::vector<uint32_t>* bfs_path(const G &g, const uint32_t src, const uint32_t d
         delete result;
         return nullptr;
     }
-    uint32_t i=destination;
+    int32_t i=destination;
     do{
         result->push_back(i);
         i=tmp[i];
